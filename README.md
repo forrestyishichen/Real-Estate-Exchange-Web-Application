@@ -3,13 +3,16 @@ for 226 Term project
 
 Welcome to the cmpe226-team wiki!
 
-1. [ERD](https://github.com/ysmiles/RealEstateExchange/master/ERD)
+1. [ERD](https://github.com/forrestyishichen/CMPE226/tree/master/ERD)
 
-2. [DDL](https://github.com/ysmiles/RealEstateExchange/master/DDL)
+2. [DDL](https://github.com/forrestyishichen/CMPE226/tree/master/DDL)
 
 ## Some things about web framework 
 
+We could pick one of them
+
 **python**
+https://codehandbook.org/python-web-application-flask-mysql/
 
 python 3.6 + flask(http://docs.jinkan.org/docs/flask/) + mysql
 
