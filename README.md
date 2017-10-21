@@ -12,6 +12,8 @@ Welcome to the cmpe226-team wiki!
 We could pick one of them
 
 **python**
+
+Resoure
 https://codehandbook.org/python-web-application-flask-mysql/
 
 python 3.6 + flask(http://docs.jinkan.org/docs/flask/) + mysql
