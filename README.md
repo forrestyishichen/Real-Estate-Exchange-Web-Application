@@ -11,13 +11,19 @@ Welcome to the cmpe226-team wiki!
 
 We could pick one of them
 
-**python**
+#Python
 
 Resoure
 https://codehandbook.org/python-web-application-flask-mysql/
 
 python 3.6 + flask(http://docs.jinkan.org/docs/flask/) + mysql
 
+**Requirements for python on mac**
+python 3.6
+pip
+flask
+flask-mysql
+pyvenv (come with python 3.6)
 
 **php**
 
