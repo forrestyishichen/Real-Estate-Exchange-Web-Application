@@ -33,3 +33,5 @@ pyvenv (come with python 3.6)
 
 LAMP set up
 
+### Note
+For Yu Shu's testing please checkout to 'ystest' branch in this repo.
