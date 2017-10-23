@@ -10,7 +10,7 @@ https://codehandbook.org/python-web-application-flask-mysql/
 python 3.6 + flask(http://docs.jinkan.org/docs/flask/) + mysql
 
 ## Plan of this branch
-1. Check current ver. ERD and schema
+1. Check current ver. ERD and schema (may need redraw)
 
 2. Check and test DDL
 
