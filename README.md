@@ -1,37 +1,25 @@
-# RealEstateExchange
-for 226 Term project
+# 226 Term project RealEstateExchange
+This branch is ystest.
+For master branch please refer to [master][master].
 
-Welcome to the cmpe226-team wiki!
+Welcome to the cmpe226-team5 wiki!
 
-1. [ERD](https://github.com/forrestyishichen/CMPE226/tree/master/ERD)
-
-2. [DDL](https://github.com/forrestyishichen/CMPE226/tree/master/DDL)
-
-## Some things about web framework 
-
-We could pick one of them
-
-**pyhton resoure**
+## Learning resources
+[Flask Official Doc](http://flask.pocoo.org/docs/0.12/)
 
 https://codehandbook.org/python-web-application-flask-mysql/
 
 python 3.6 + flask(http://docs.jinkan.org/docs/flask/) + mysql
 
-**Requirements for python on mac**
 
-python 3.6
 
-pip
+## Required packages
 
-flask
+Python 3.6 (pip already included)
 
-flask-mysql
+Flask, flask-mysql
 
 pyvenv (come with python 3.6)
 
-**php**
 
-LAMP set up
-
-### Note
-For Yu Shu's testing please checkout to 'ystest' branch in this repo.
+[master]: https://github.com/forrestyishichen/CMPE226/tree/master
