@@ -19,9 +19,13 @@
         Forrest's Site
         <h1>
 </table>
-<a href="/">
-    <img src="/static/gundam_unicorn.jpg" alt="background" style="width:304;height:228;">
-</a>
+<table>
+{% if name %}
+  <pre>{{ name }}</pre>
+{% else %}
+  <h1>Hello World!</h1>
+{% endif %}
+</table>
 <footer>
     <p style="text-align: center">If you have any question, please feel free to contact us if you have any question.</p>
 </footer>
