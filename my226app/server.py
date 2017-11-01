@@ -2,6 +2,10 @@ from flask import Flask, request, session, g, abort, redirect, url_for, render_t
 from flaskext.mysql import MySQL
 import json
 
+'''
+database
+'''
+
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'any random string'
@@ -11,16 +15,26 @@ app.config['MYSQL_DATABASE_DB'] = 'mydata'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
+'''
+Index
+'''
+
 @app.route('/')
 def index():
     return current_app.send_static_file('index.html')
 
+'''
+Static page
+'''
+
 @app.route('/<string:page_name>/')
 def static_page(page_name):
     return current_app.send_static_file('%s.html' % page_name)
+
 '''
-test part
+Old output
 '''
+
 @app.route('/hello/')
 @app.route('/hello/<name>')
 def hello(name=None):
@@ -31,6 +45,10 @@ def hello(name=None):
     mydata = cursor.fetchall()
     return render_template('hello.html', name=mydata)
 
+'''
+New output
+'''
+
 @app.route('/show')
 def show_entries():
     cursor = mysql.connect().cursor()
@@ -39,6 +57,9 @@ def show_entries():
     entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
     return render_template('show_entries.html', entries=entries)
 
+'''
+New input
+'''
 
 @app.route('/add', methods=['POST'])
 def add_entry():
@@ -49,6 +70,10 @@ def add_entry():
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
+
+'''
+New login
+'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,6 +91,10 @@ def login():
             flash('You were logged in')
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
+
+'''
+Register
+'''
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -87,11 +116,30 @@ def register():
             return redirect(url_for('show_entries'))
     return render_template('register.html', error=error)
 
+'''
+Login out
+'''
+
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+
+'''
+Single user page
+'''
+
+@app.route('/user/<username>', methods=['GET'])
+def show_user_profile(username):
+    cursor = mysql.connect().cursor()
+    cursor.execute("SELECT * from User where Username='" + username + "'")
+    data = cursor.fetchone()
+    if data is None:
+     return "User not found"
+    else:
+     return data
 
 # @app.route('/user/<username>')
 # def show_user_profile(username):
@@ -130,35 +178,13 @@ def Newuseradder():
     conn.commit()
     return redirect(url_for('index'))
 
-@app.route("/Alluser", methods=['GET'])
-def Alluser():
-    cursor = mysql.connect().cursor()
-    cursor.execute("SELECT * from User")
-    return jsonify(data=cursor.fetchall())
-
-# @app.route('/login', methods=['POST', 'GET'])
-# def login():
-#     error = None
-#     if request.method == 'POST':
-#         if valid_login(request.form['username'],
-#                        request.form['password']):
-#             return log_the_user_in(request.form['username'])
-#         else:
-#             error = 'Invalid username/password'
-#     # the code below is executed if the request method
-#     # was GET or the credentials were invalid
-#     return render_template('login.html', error=error)
-
-# @app.errorhandler(404)
-# def page_not_found(error):
-#     return render_template('page_not_found.html'), 404
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html'), 404
 
 if __name__ == '__main__':
     app.debug = True
     app.run()
     # app.run(host='0.0.0.0',port=5000)
-
-
-# url_for('static', filename='style.css')
 
 

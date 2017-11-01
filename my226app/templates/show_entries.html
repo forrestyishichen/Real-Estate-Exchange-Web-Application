@@ -36,7 +36,7 @@
   <tbody>
   {% for entry in entries %}
   <tr>
-  <td>{{ entry.title }}</td>
+  <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a></td>
   <td>{{ entry.text|safe }}</td>
   </tr>
   {% else %}
