@@ -7,11 +7,7 @@ Welcome to the cmpe226-team wiki!
 
 2. [DDL](https://github.com/forrestyishichen/CMPE226/tree/master/DDL)
 
-## Some things about web framework 
-
-We could pick one of them
-
-**pyhton resoure**
+## Basic Set up
 
 https://codehandbook.org/python-web-application-flask-mysql/
 
@@ -29,9 +25,9 @@ flask-mysql
 
 pyvenv (come with python 3.6)
 
-**php**
+## Run
 
-LAMP set up
+python server.py
 
 ### Note
 For Yu Shu's testing please checkout to 'ystest' branch in this repo.
