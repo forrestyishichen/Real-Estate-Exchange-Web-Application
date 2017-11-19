@@ -1,3 +1,8 @@
+<script src="webfont.js"></script>
+<script src="snap.svg-min.js"></script>
+<script src="underscore-min.js"></script>
+<script src="sequence-diagram-min.js"></script>
+
 ## Functional Dependencies
 
 ### 1. Original
