@@ -3,9 +3,8 @@ from flaskext.mysql import MySQL
 import json
 
 '''
-database
+init
 '''
-
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'any random string'
@@ -33,7 +32,7 @@ def static_page(page_name):
     return current_app.send_static_file('%s.html' % page_name)
 
 '''
-Market Report with Search Page!
+Main Page --- Market Report with Search
 '''
 
 @app.route('/show')
@@ -46,7 +45,8 @@ def show_entries():
     return render_template('show_entries.html', entries=entries)
 
 '''
-New input
+Input
+TO DO **** transaction, add 
 '''
 
 @app.route('/add', methods=['POST'])
@@ -91,6 +91,23 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        '''
+        Add more
+        '''
+        
+
+
+        '''
+        Empty check
+        '''
+        if username == '' or password == '':
+            error = "Missing Information!"
+            return render_template('register.html', error=error)
+
+        '''
+        Duplicate check
+        '''
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("SELECT Username from User where Username='" + username + "'")
@@ -117,8 +134,11 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
+
+
 '''
-Single user page
+Detail page
+TO DO **** list detail and action
 '''
 
 @app.route('/user/<username>', methods=['GET'])
@@ -131,10 +151,20 @@ def show_user_profile(username):
     else:
      return data
 
+'''
+Error
+TO DO **** add a template
+'''
+
 @app.errorhandler(404)
 def page_not_found(error):
     return "404 page_not_found" , 404
     # return render_template('page_not_found.html'), 404
+
+
+'''
+Main
+'''
 
 if __name__ == '__main__':
     app.debug = True
