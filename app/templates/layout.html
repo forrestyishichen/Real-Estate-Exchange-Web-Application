@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Template</title>
+<title>Forrest'Site</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <div class=page>
   <h1>Forrest's Site</h1>
@@ -8,6 +8,7 @@
     <a href="{{ url_for('register') }}">register</a>
     <a href="{{ url_for('login') }}">log in</a>
   {% else %}
+    <a>Log in as {{ session.username }}</a>
     <a href="{{ url_for('logout') }}">log out</a>
   {% endif %}
   </div>
