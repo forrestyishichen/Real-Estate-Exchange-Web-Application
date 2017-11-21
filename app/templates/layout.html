@@ -8,7 +8,7 @@
     <a href="{{ url_for('register') }}">register</a>
     <a href="{{ url_for('login') }}">log in</a>
   {% else %}
-    <a>Log in as {{ session.username }}</a>
+    <a>Welcome, {{ session.username }}!</a>
     <a href="{{ url_for('logout') }}">log out</a>
   {% endif %}
   </div>

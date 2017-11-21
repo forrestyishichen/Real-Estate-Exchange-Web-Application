@@ -1,6 +1,7 @@
 from flask import Flask, request, session, escape, g, abort, redirect, url_for, render_template, flash, current_app, jsonify
 from flaskext.mysql import MySQL
 import json
+from werkzeug.security import generate_password_hash, check_password_hash
 
 '''
 init
@@ -69,16 +70,22 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        cursor = mysql.connect().cursor()
-        cursor.execute("SELECT * from User where Username='" + username + "' and Password='" + password + "'")
+        role = request.form['role']
+        '''
+        Validation
+        '''
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT password from User where Username='" + username + "'")
         data = cursor.fetchone()
-        if data is None:
-            error = 'Invalid username and password'
-        else:
+        if check_password_hash(data[0], password):
             session['logged_in'] = True
             session['username'] = username
-            flash('Logged in as %s' % escape(session['username']))
+            session['role'] = role
+            flash('Logged in as %s' % escape(session['role']))
             return redirect(url_for('show_entries'))
+        else:
+            error = 'Invalid username and password'
     return render_template('login.html', error=error)
 
 '''
@@ -91,12 +98,11 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        hashed_password = generate_password_hash(password)
 
         '''
         Add more
         '''
-        
-
 
         '''
         Empty check
@@ -115,12 +121,10 @@ def register():
         if data is not None:
             error = 'Duplicate username and password'
         else:
-            cursor.execute('''INSERT INTO User (userName, password) VALUES(%s, %s)''', (username, password))
+            cursor.execute('''INSERT INTO User (userName, password) VALUES(%s, %s)''', (username, hashed_password))
             conn.commit()
-            session['logged_in'] = True
-            session['username'] = username
-            flash('You were registered, %s' % escape(session['username']))
-            return redirect(url_for('show_entries'))
+            flash('You were registered, %s' % escape(username))
+            return render_template('login.html', error=error)
     return render_template('register.html', error=error)
 
 '''
@@ -132,7 +136,7 @@ def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('login'))
 
 
 

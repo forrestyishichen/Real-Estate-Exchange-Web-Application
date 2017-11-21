@@ -30,13 +30,28 @@ python server.py
 
 ## Task List
 
-**user register**
-**property register for owner**
-**open house register for agent**
-**offer register for buyer**
-**transaction for accept offer**
-**market report**
-**search**
+
+**Finished**
+
+User Login Form
+User Register Gorm
+Session Tracking (user, role)
+Password Hash
+
+**TO DO**
+
+Role's Dashboard Bar
+Serach Page
+Market Report
+Single Property Page (with operation script)
+Owner: Property register form
+Owner: Property page
+Owner: Offer page
+Agent: Open House register form
+Agent: Commision Page
+Buyer: Offer register form
+Buyer: Offer page
+**Transaction for accept offer**
 
 ## Extra
 

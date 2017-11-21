@@ -5,14 +5,26 @@
   <form action="{{ url_for('register') }}" method=post>
     <dl>
       <dt>Username:
-      <dd><input type=text name=username>
+      <dd><input type=text name=username value=>
       <dt>Password:
       <dd><input type=password name=password>
-      <dt>Pick A Role:
-      <dd><input type=checkbox name=owner>Property Owner<br>
-      <dd><input type=checkbox name=agent>Property Agent<br>
-      <dd><input type=checkbox name=buyer>Property Buyer<br>
-      <dd><input type=submit value=Register>
+      <dt>SSN:
+      <dd><input type=password name=ssn value="888888888">
+      <dt>Fisrt Name:
+      <dd><input type=text name=fname value="Yishi">
+      <dt>Middle Name:
+      <dd><input type=text name=minit value="">
+      <dt>Last Name:
+      <dd><input type=text name=lname value="Chen">
+      <dt>Birth Day:
+      <dd><input type=text name=bdate value="1/12/1988">
+      <dt>Email:
+      <dd><input type=text name=email value="forrestyschen@gmail.com">
+      <dt>Address:
+      <dd><textarea name=address rows=5 cols=40 >1279 38th Ave, San Francisco, CA, 94122</textarea>
+      <dt>Phone:
+      <dd><textarea name=phone rows=5 cols=40>415-745-5361</textarea>
+      <dd><input type=submit value=Login>
     </dl>
   </form>
 {% endblock %}
