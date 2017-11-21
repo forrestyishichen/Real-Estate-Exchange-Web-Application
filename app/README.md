@@ -36,7 +36,7 @@ python server.py
 User Login Form\
 User Register Gorm\
 Session Tracking (user, role)\
-Password Hash\
+Password Hash
 
 **TO DO**
 
@@ -51,7 +51,7 @@ Agent: Open House register form\
 Agent: Commision Page\
 Buyer: Offer register form\
 Buyer: Offer page\
-**Transaction for accept offer**\
+**Transaction for accept offer**
 
 ## Extra
 
