@@ -1,6 +1,10 @@
 # 226 Term project RealEstateExchange
 
-Welcome to the Team app
+Welcome to the cmpe226-team wiki!
+
+1. [ERD](https://github.com/forrestyishichen/CMPE226/tree/master/ERD)
+
+2. [DDL](https://github.com/forrestyishichen/CMPE226/tree/master/DDL)
 
 ## Basic Set up
 
@@ -26,39 +30,4 @@ YS: In my experience, many popular libraries (such as TensorFlow and gRPC) use `
 ## Run
 
 python server.py
-
-
-## Task List
-
-
-**Finished**
-
-User Login Form
-User Register Gorm
-Session Tracking (user, role)
-Password Hash
-
-**TO DO**
-
-Role's Dashboard Bar
-Serach Page
-Market Report
-Single Property Page (with operation script)
-Owner: Property register form
-Owner: Property page
-Owner: Offer page
-Agent: Open House register form
-Agent: Commision Page
-Agent: Open House Page
-Buyer: Offer register form
-Buyer: Offer page
-Buyer: Open House page 
-**Transaction for accept offer**
-**Property recommondation**
-
-## Extra
-
-**mongodb for pics**
-
-Could be more
 
