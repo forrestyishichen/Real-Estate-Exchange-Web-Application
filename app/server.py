@@ -33,7 +33,7 @@ def static_page(page_name):
     return current_app.send_static_file('%s.html' % page_name)
 
 '''
-Main Page --- Market Report with Search
+Main Page 1 --- Market Report with Search
 '''
 
 @app.route('/show')
@@ -44,6 +44,14 @@ def show_entries():
     entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
     cursor.close()
     return render_template('show_entries.html', entries=entries)
+
+'''
+Main Page 2 --- Open House Search
+'''
+
+@app.route('/searchopenhouse')
+def show_openhouse():
+    return render_template('searchopenhouse.html')
 
 '''
 Input
@@ -86,48 +94,18 @@ def login():
             '''
             Register to role table
             '''
-            if role == 'owner':
-                cursor.execute('''SELECT owner_num FROM owner WHERE ssn = %s''',(username))
-                data = cursor.fetchone()
-                print(data)
-                if data is None:
-                    cursor.execute("SELECT count(*) FROM owner")
-                    num = cursor.fetchone()
-                    cursor.execute('''INSERT INTO owner (owner_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
-                    conn.commit()
-                    session['roleid'] = (role+'_'+str(num[0]+1))
-                    flash('Register as %s' % escape(session['rolename']))
-                else:
-                    session['roleid'] = data[0]
-                    flash('Login as %s' % escape(session['rolename']))
-            elif role == 'agent':
-                cursor.execute('''SELECT agent_num FROM agent WHERE ssn = %s''',(username))
-                data = cursor.fetchone()
-                print(data)
-                if data is None:
-                    cursor.execute("SELECT count(*) FROM agent")
-                    num = cursor.fetchone()
-                    cursor.execute('''INSERT INTO agent (agent_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
-                    conn.commit()
-                    session['roleid'] = (role+'_'+str(num[0]+1))
-                    flash('Register as %s' % escape(session['rolename']))
-                else:
-                    session['roleid'] = data[0]
-                    flash('Login as %s' % escape(session['rolename']))
-            elif role == 'buyer':
-                cursor.execute('''SELECT buyer_num FROM buyer WHERE ssn = %s''',(username))
-                data = cursor.fetchone()
-                print(data)
-                if data is None:
-                    cursor.execute("SELECT count(*) FROM buyer")
-                    num = cursor.fetchone()
-                    cursor.execute('''INSERT INTO buyer (buyer_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
-                    conn.commit()
-                    session['roleid'] = (role+'_'+str(num[0]+1))
-                    flash('Register as %s' % escape(session['rolename']))
-                else:
-                    session['roleid'] = data[0]
-                    flash('Login as %s' % escape(session['rolename']))   
+            cursor.execute("SELECT {} FROM {} WHERE ssn = '{}'" .format((role+'_num'), role, username))
+            data = cursor.fetchone()
+            if data is None:
+                cursor.execute("SELECT count(*) FROM {}" .format(role))
+                num = cursor.fetchone()
+                cursor.execute("INSERT INTO {} ({}, ssn) VALUES('{}', '{}')" .format(role,(role+'_num'),(role+'_'+str(num[0]+1)), username))
+                conn.commit()
+                session['roleid'] = (role+'_'+str(num[0]+1))
+                flash('Register as %s' % escape(session['rolename']))
+            else:
+                session['roleid'] = data[0]
+                flash('Login as %s' % escape(session['rolename']))
             cursor.close()
             return redirect(url_for('show_entries'))
         else:
@@ -163,7 +141,7 @@ def register():
         '''
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT Username from User where Username='" + username + "'")
+        cursor.execute("SELECT Username FROM User WHERE Username='" + username + "'")
         data = cursor.fetchone()
         if data is not None:
             error = 'Duplicate username and password'
