@@ -16,7 +16,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 '''
-Index
+Index Page
 '''
 
 @app.route('/')
@@ -33,28 +33,95 @@ def static_page(page_name):
     return current_app.send_static_file('%s.html' % page_name)
 
 '''
-Main Page 1 --- Market Report with Search
+Main Page 1 --- Property Search with recommendation
 '''
 
-@app.route('/show')
-def show_entries():
+@app.route('/search_property', methods=['GET', 'POST'])
+def search_property():
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("SELECT * from user")
     entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
     cursor.close()
-    return render_template('show_entries.html', entries=entries)
+    return render_template('search_property.html', entries=entries)
 
 '''
 Main Page 2 --- Open House Search
 '''
 
-@app.route('/searchopenhouse')
-def show_openhouse():
-    return render_template('searchopenhouse.html')
+@app.route('/searchopenhouse', methods=['GET', 'POST'])
+def search_openhouse():
+    return render_template('search_openhouse.html')
+    # return render_template('search_openhouse.html', entries=entries)
 
 '''
-Input
+Main Page 3 --- Market Report
+'''
+
+# @app.route('/marketreport', methods=['GET'])
+# def market_report():
+#     return render_template('market_report.html')
+
+'''
+Owner Page1 --- Add property and list property
+'''
+@app.route('/ownerproperty' , methods=['GET', 'POST'])
+def owner_property():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    cursor.close()
+    return render_template('owenr_property.html', entries=entries)
+
+'''
+Owner Page2 --- Offer managerment
+'''
+@app.route('/owneroffer', methods=['GET', 'POST'])
+def owner_offer():
+    return render_template('owner_offer.html')
+
+'''
+Agent Page1 --- Add Openhouse and list Openhouse
+'''
+@app.route('/agentopenhouse' , methods=['GET', 'POST'])
+def agent_openhouse():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    cursor.close()
+    return render_template('agent_openhouse.html', entries=entries)
+
+'''
+Agent Page2 --- Commision managerment
+'''
+@app.route('/agentcommision', methods=['GET', 'POST'])
+def agent_commision():
+    return render_template('agent_commision.html')
+
+'''
+Buyer Page1 --- Add offer and list offer
+'''
+@app.route('/buyeroffer' , methods=['GET', 'POST'])
+def buyer_offer():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    cursor.close()
+    return render_template('buyer_offer.html', entries=entries)
+
+'''
+Buyer Page2 --- Open House managerment
+'''
+@app.route('/buyeropenhouse', methods=['GET', 'POST'])
+def buyer_openhouse():
+    return render_template('buyer_openhouse.html')
+
+
+'''
+Search funtion
 TO DO **** transaction, add 
 '''
 
@@ -107,7 +174,7 @@ def login():
                 session['roleid'] = data[0]
                 flash('Login as %s' % escape(session['rolename']))
             cursor.close()
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('search_property'))
         else:
             cursor.close()
             error = 'Invalid username and password'

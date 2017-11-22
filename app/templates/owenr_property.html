@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+  <h2>Sell My Home</h2>
+  <form action="#" method=post class=add-entry>
+    <dl>
+      <dt>Price:
+      <dd>
+        <input type=text size=30 name=lowprice>
+        <p>between</p>
+        <input type=text size=30 name=highprice>
+      <dt>Area:
+      <dd><input type=text size=30 name=area>
+      <dt>Others:
+      <!-- <dd><textarea name=text rows=5 cols=40></textarea> -->
+      <dd><input type=submit value=search>
+    </dl>
+  </form>
+  <br>
+  <h2>My Home</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a>
+            </td>
+            <td>{{ entry.text|safe }}
+            </td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}
