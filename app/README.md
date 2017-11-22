@@ -33,28 +33,29 @@ python server.py
 
 **Finished**
 
-User Login Form
-User Register Gorm
-Session Tracking (user, role)
-Password Hash
+User Login Form\
+User Register Gorm\
+Session Tracking (user, role)\
+Password Hash\
+Role's Dashboard Bar
 
 **TO DO**
 
-Role's Dashboard Bar
-Serach Page
-Market Report
-Single Property Page (with operation script)
-Owner: Property register form
-Owner: Property page
-Owner: Offer page
-Agent: Open House register form
-Agent: Commision Page
-Agent: Open House Page
-Buyer: Offer register form
-Buyer: Offer page
-Buyer: Open House page 
+Serach Page(main page 1)\
+Market Report(main page 1)\
+Open House serach(main page 2)\
+Single Property Page (with operation script)(individual page)\
+Owner: Property register form(o1)\
+Owner: Property page(o1)\
+Owner: Offer page(o2)\
+Agent: Open House register form(a1)\
+Agent: Open House Page(a1)\
+Agent: Commision Page(a2)\
+Buyer: Offer register form(b1)\
+Buyer: Offer page(b1)\
+Buyer: Open House page(b2)\
 **Transaction for accept offer**
-**Property recommondation**
+**Property recommondation(individual page)**
 
 ## Extra
 

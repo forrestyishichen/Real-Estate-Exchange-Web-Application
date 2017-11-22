@@ -40,9 +40,9 @@ Main Page --- Market Report with Search
 def show_entries():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from User")
-    # cur = g.db.execute('select title, text from entries order by id desc')
+    cursor.execute("SELECT * from user")
     entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    cursor.close()
     return render_template('show_entries.html', entries=entries)
 
 '''
@@ -50,15 +50,15 @@ Input
 TO DO **** transaction, add 
 '''
 
-@app.route('/add', methods=['POST'])
-def add_entry():
-    if not session.get('logged_in'):
-        abort(401)
-    g.db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
-    g.db.commit()
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
+# @app.route('/add', methods=['POST'])
+# def add_entry():
+#     if not session.get('logged_in'):
+#         abort(401)
+#     g.db.execute('insert into entries (title, text) values (?, ?)',
+#                  [request.form['title'], request.form['text']])
+#     g.db.commit()
+#     flash('New entry was successfully posted')
+#     return redirect(url_for('show_entries'))
 
 '''
 Login
@@ -81,10 +81,57 @@ def login():
         if check_password_hash(data[0], password):
             session['logged_in'] = True
             session['username'] = username
-            session['role'] = role
-            flash('Logged in as %s' % escape(session['role']))
+            session['rolename'] = role
+
+            '''
+            Register to role table
+            '''
+            if role == 'owner':
+                cursor.execute('''SELECT owner_num FROM owner WHERE ssn = %s''',(username))
+                data = cursor.fetchone()
+                print(data)
+                if data is None:
+                    cursor.execute("SELECT count(*) FROM owner")
+                    num = cursor.fetchone()
+                    cursor.execute('''INSERT INTO owner (owner_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
+                    conn.commit()
+                    session['roleid'] = (role+'_'+str(num[0]+1))
+                    flash('Register as %s' % escape(session['rolename']))
+                else:
+                    session['roleid'] = data[0]
+                    flash('Login as %s' % escape(session['rolename']))
+            elif role == 'agent':
+                cursor.execute('''SELECT agent_num FROM agent WHERE ssn = %s''',(username))
+                data = cursor.fetchone()
+                print(data)
+                if data is None:
+                    cursor.execute("SELECT count(*) FROM agent")
+                    num = cursor.fetchone()
+                    cursor.execute('''INSERT INTO agent (agent_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
+                    conn.commit()
+                    session['roleid'] = (role+'_'+str(num[0]+1))
+                    flash('Register as %s' % escape(session['rolename']))
+                else:
+                    session['roleid'] = data[0]
+                    flash('Login as %s' % escape(session['rolename']))
+            elif role == 'buyer':
+                cursor.execute('''SELECT buyer_num FROM buyer WHERE ssn = %s''',(username))
+                data = cursor.fetchone()
+                print(data)
+                if data is None:
+                    cursor.execute("SELECT count(*) FROM buyer")
+                    num = cursor.fetchone()
+                    cursor.execute('''INSERT INTO buyer (buyer_num, ssn) VALUES(%s, %s)''', ((role+'_'+str(num[0]+1)), username))
+                    conn.commit()
+                    session['roleid'] = (role+'_'+str(num[0]+1))
+                    flash('Register as %s' % escape(session['rolename']))
+                else:
+                    session['roleid'] = data[0]
+                    flash('Login as %s' % escape(session['rolename']))   
+            cursor.close()
             return redirect(url_for('show_entries'))
         else:
+            cursor.close()
             error = 'Invalid username and password'
     return render_template('login.html', error=error)
 
@@ -120,9 +167,11 @@ def register():
         data = cursor.fetchone()
         if data is not None:
             error = 'Duplicate username and password'
+            cursor.close()
         else:
             cursor.execute('''INSERT INTO User (userName, password) VALUES(%s, %s)''', (username, hashed_password))
             conn.commit()
+            cursor.close()
             flash('You were registered, %s' % escape(username))
             return render_template('login.html', error=error)
     return render_template('register.html', error=error)
@@ -135,6 +184,8 @@ Logout
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
+    session.pop('rolename', None)
+    session.pop('roleid', None)
     flash('You were logged out')
     return redirect(url_for('login'))
 
@@ -150,21 +201,19 @@ def show_user_profile(username):
     cursor = mysql.connect().cursor()
     cursor.execute("SELECT * from User where Username='" + username + "'")
     data = cursor.fetchone()
+    cursor.close()
     if data is None:
      return "User not found"
     else:
      return data
 
 '''
-Error
-TO DO **** add a template
+404
 '''
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return "404 page_not_found" , 404
-    # return render_template('page_not_found.html'), 404
-
+    return render_template('page_not_found.html'), 404
 
 '''
 Main

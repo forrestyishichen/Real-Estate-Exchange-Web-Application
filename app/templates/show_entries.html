@@ -1,11 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
+  {% if session.rolename == "owner" %}
   <div class=metanav>
     <a href="{{ url_for('show_entries') }}">Find a Home</a>
+    <a href="#">Find a Open House</a>
     <a href="#">Sell My Home</a>
     <a href="#">Review My Offer</a>
   </div>
+  {% endif %}
+  {% if session.rolename == "agent" %}
+  <div class=metanav>
+    <a href="{{ url_for('show_entries') }}">Find a Home</a>
+    <a href="#">Find a Open House</a>
+    <a href="#">My Open House</a>
+    <a href="#">My Commision</a>
+  </div>
+  {% endif %}
+  {% if session.rolename == "buyer" %}
+  <div class=metanav>
+    <a href="{{ url_for('show_entries') }}">Find a Home</a>
+    <a href="#">Find a Open House</a>
+    <a href="#">My offer</a>
+    <a href="#">My Open house</a>
+  </div>
+  {% endif %}
   <h2>Find a Home</h2>
   <form action="#" method=post class=add-entry>
     <dl>
