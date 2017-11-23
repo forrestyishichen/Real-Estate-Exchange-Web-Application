@@ -1,7 +1,10 @@
-from flask import Flask, request, session, escape, g, abort, redirect, url_for, render_template, flash, current_app, jsonify
+from flask import Flask, request, session, escape, g, abort, redirect, url_for, render_template, flash, current_app, jsonify, app
 from flaskext.mysql import MySQL
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta
+
+
 
 '''
 init
@@ -14,6 +17,15 @@ app.config['MYSQL_DATABASE_PASSWORD'] = '880112'
 app.config['MYSQL_DATABASE_DB'] = 'mydata'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+
+
+'''
+Session Timeout
+'''
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
 '''
 Index Page
@@ -67,57 +79,104 @@ Owner Page1 --- Add property and list property
 '''
 @app.route('/ownerproperty' , methods=['GET', 'POST'])
 def owner_property():
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
-    cursor.close()
-    return render_template('owenr_property.html', entries=entries)
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.close()
+        return render_template('owenr_property.html', entries=entries)
 
 '''
 Owner Page2 --- Offer managerment
 '''
 @app.route('/owneroffer', methods=['GET', 'POST'])
 def owner_offer():
-    return render_template('owner_offer.html')
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.close()
+        return render_template('owner_offer.html', entries=entries)
 
 '''
 Agent Page1 --- Add Openhouse and list Openhouse
 '''
 @app.route('/agentopenhouse' , methods=['GET', 'POST'])
 def agent_openhouse():
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
-    cursor.close()
-    return render_template('agent_openhouse.html', entries=entries)
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.close()
+        return render_template('agent_openhouse.html', entries=entries)
 
 '''
 Agent Page2 --- Commision managerment
 '''
 @app.route('/agentcommision', methods=['GET', 'POST'])
 def agent_commision():
-    return render_template('agent_commision.html')
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.close()
+        return render_template('agent_commision.html', entries=entries)
 
 '''
 Buyer Page1 --- Add offer and list offer
 '''
-@app.route('/buyeroffer' , methods=['GET', 'POST'])
-def buyer_offer():
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
-    cursor.close()
-    return render_template('buyer_offer.html', entries=entries)
+@app.route('/buyeroffer/', methods=['GET', 'POST'])
+@app.route('/buyeroffer/<prperty_id>', methods=['GET', 'POST'])
+def buyer_offer(prperty_id=''):
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        id = prperty_id
+        cursor.close()
+        return render_template('buyer_offer.html', entries=entries, id=id)
 
 '''
 Buyer Page2 --- Open House managerment
 '''
 @app.route('/buyeropenhouse', methods=['GET', 'POST'])
 def buyer_openhouse():
-    return render_template('buyer_openhouse.html')
+    error = None
+    if 'username' not in session:
+        error = 'Please Login First'
+        return render_template('login.html', error=error)
+    else:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.close()
+        return render_template('buyer_openhouse.html', entries=entries)
 
 
 '''
@@ -241,16 +300,22 @@ Detail page
 TO DO **** list detail and action
 '''
 
-@app.route('/user/<username>', methods=['GET'])
-def show_user_profile(username):
-    cursor = mysql.connect().cursor()
-    cursor.execute("SELECT * from User where Username='" + username + "'")
-    data = cursor.fetchone()
+@app.route('/entity/<prperty_id>', methods=['GET'])
+def show_property_profile(prperty_id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from user where username='" + prperty_id + "'")
+    entries = [dict(id=row[0], status=row[1])
+        # , price=row[2],\
+     # room_num=row[3], bath_num=row[4], garage_num=row[5],\
+     # lot_size=row[6], zip_code=row[7], area=row[8]) \
+     for row in cursor.fetchall()]
+    print(entries)
     cursor.close()
-    if data is None:
-     return "User not found"
+    if entries is not None:
+        return render_template('property_detail.html', entries=entries)
     else:
-     return data
+        return render_template('page_not_found.html'), 404
 
 '''
 404

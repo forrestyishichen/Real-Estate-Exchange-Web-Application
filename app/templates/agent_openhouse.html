@@ -1,19 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if session.logged_in %}
+{% if session.logged_in %}
   <h2>Add an Open House</h2>
-  <form action="#" method=post class=add-entry>
+   <form action="#" method=post class=add-entry>
     <dl>
-      <dt>Price:
-      <dd>
-        <input type=text size=30 name=lowprice>
-        <p>between</p>
-        <input type=text size=30 name=highprice>
-      <dt>Area:
-      <dd><input type=text size=30 name=area>
-      <dt>Others:
-      <!-- <dd><textarea name=text rows=5 cols=40></textarea> -->
-      <dd><input type=submit value=search>
+      <dt>ID:
+      <dd><input type=text size=30 name=property_id>
+      <dt>Start Date:
+      <dd><input type=text size=30 name=start_date>
+      <dt>End Date:
+      <dd><input type=text size=30 name=end_date>
+      <dd><input type=submit value=submit>
     </dl>
   </form>
   <br>

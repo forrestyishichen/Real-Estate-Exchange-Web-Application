@@ -5,11 +5,11 @@
   <h1>Forrest's Site</h1>
   <div class=metanav>
   {% if not session.logged_in %}
-    <a href="{{ url_for('register') }}">register</a>
-    <a href="{{ url_for('login') }}">log in</a>
+    <a href="{{ url_for('register') }}">Register</a>
+    <a href="{{ url_for('login') }}">Log In</a>
   {% else %}
     <a>Welcome, {{ session.username }}!</a>
-    <a href="{{ url_for('logout') }}">log out</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
   {% endif %}
   </div>
   {% for message in get_flashed_messages() %}

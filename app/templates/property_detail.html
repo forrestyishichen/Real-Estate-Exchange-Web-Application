@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if session.logged_in %}
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Room</th>
+          <th>Bath Room</th>
+          <th>Garage</th>
+          <th>Lot Size</th>
+          <th>Zip</th>
+          <th>Area</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          {% if session.rolename == "buyer" %}
+          <form action="/buyeroffer/{{ entry.id|safe }}" method="post">
+            <input type="submit" value="I want to buy">
+          </form>
+          {% endif %}
+          <tr>
+            <td>{{ entry.id|safe }}</td>
+            <td>{{ entry.status|safe }}</td>
+            <td>{{ entry.price|safe }}</td>
+            <td>{{ entry.room_num|safe }}</td>
+            <td>{{ entry.bath_num|safe }}</td>
+            <td>{{ entry.garage_num|safe }}</td>
+            <td>{{ entry.lot_size|safe }}</td>
+            <td>{{ entry.zip_code|safe }}</td>
+            <td>{{ entry.area|safe }}</td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}
