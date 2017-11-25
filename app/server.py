@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = 'any random string'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '880112'
-app.config['MYSQL_DATABASE_DB'] = 'mydata'
+app.config['MYSQL_DATABASE_DB'] = 'teamfive'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -52,8 +52,15 @@ Main Page 1 --- Property Search with recommendation
 def search_property():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from user")
-    entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    cursor.execute("SELECT * from property")
+    '''
+    '''
+    entries = []
+    for i in range(3):
+        row = cursor.fetchone()
+        entries.append([row[0], row[1]])
+    # entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+    print(entries)
     cursor.close()
     return render_template('search_property.html', entries=entries)
 
@@ -210,22 +217,26 @@ def login():
         '''
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT password from User where Username='" + username + "'")
+        cursor.execute("SELECT password, ssn from user where user_name= '{}'" .format(username))
         data = cursor.fetchone()
-        if check_password_hash(data[0], password):
+        print (data)
+        if data == None:
+            error = 'Invalid username and password'
+        elif check_password_hash(data[0], password):
+            print("yes")
             session['logged_in'] = True
             session['username'] = username
             session['rolename'] = role
-
+            session['ssn'] = data[1]
             '''
             Register to role table
             '''
-            cursor.execute("SELECT {} FROM {} WHERE ssn = '{}'" .format((role+'_num'), role, username))
+            cursor.execute("SELECT {} FROM {} WHERE ssn = '{}'" .format((role+'_num'), role, session['ssn']))
             data = cursor.fetchone()
             if data is None:
                 cursor.execute("SELECT count(*) FROM {}" .format(role))
                 num = cursor.fetchone()
-                cursor.execute("INSERT INTO {} ({}, ssn) VALUES('{}', '{}')" .format(role,(role+'_num'),(role+'_'+str(num[0]+1)), username))
+                cursor.execute("INSERT INTO {} ({}, ssn) VALUES('{}', '{}')" .format(role,(role+'_num'),(role+'_'+str(num[0]+1)), session['ssn']))
                 conn.commit()
                 session['roleid'] = (role+'_'+str(num[0]+1))
                 flash('Register as %s' % escape(session['rolename']))
@@ -249,16 +260,20 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        ssn = request.form['ssn']
+        fname = request.form['fname']
+        minit = request.form['minit']
+        lname = request.form['lname']
+        bdate = request.form['bdate']
+        email = request.form['email']
+        address = request.form['address']
+        phone = request.form['phone']
         hashed_password = generate_password_hash(password)
-
-        '''
-        Add more
-        '''
 
         '''
         Empty check
         '''
-        if username == '' or password == '':
+        if username == '' or password == '' or ssn == '' or email == '':
             error = "Missing Information!"
             return render_template('register.html', error=error)
 
@@ -267,17 +282,25 @@ def register():
         '''
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT Username FROM User WHERE Username='" + username + "'")
+        cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
         data = cursor.fetchone()
         if data is not None:
             error = 'Duplicate username and password'
             cursor.close()
         else:
-            cursor.execute('''INSERT INTO User (userName, password) VALUES(%s, %s)''', (username, hashed_password))
-            conn.commit()
-            cursor.close()
-            flash('You were registered, %s' % escape(username))
-            return render_template('login.html', error=error)
+            '''
+            Transaction
+            '''
+            conn.autocommit(False)
+            try:
+                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
+                cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+                conn.commit()
+                cursor.close()
+                flash('You were registered, %s' % escape(username))
+                return render_template('login.html', error=error)
+            except:
+                conn.rollback()    
     return render_template('register.html', error=error)
 
 '''
@@ -290,6 +313,7 @@ def logout():
     session.pop('username', None)
     session.pop('rolename', None)
     session.pop('roleid', None)
+    session.pop('ssn', None)
     flash('You were logged out')
     return redirect(url_for('login'))
 
@@ -310,7 +334,6 @@ def show_property_profile(prperty_id):
      # room_num=row[3], bath_num=row[4], garage_num=row[5],\
      # lot_size=row[6], zip_code=row[7], area=row[8]) \
      for row in cursor.fetchall()]
-    print(entries)
     cursor.close()
     if entries is not None:
         return render_template('property_detail.html', entries=entries)

@@ -47,7 +47,7 @@ Agent: Commision Page(a2)\
 Buyer: Offer register form(b1)\
 Buyer: Offer page(b1)\
 Buyer: Open House page(b2)\
-**Transaction for accept offer**\
+**Transaction for accept offer**
 
 ## Extra
 
@@ -55,3 +55,15 @@ Buyer: Open House page(b2)\
 
 Could be more
 
+
+## Presentaion Topic
+
+1. Pyhton + Flask + Mysql Web Application. Trying to utilize mysql as much as possible, let server take care of everything (such as login validation). Login Section: Session contorl. User table and Role table. The reason we set up in this way.
+
+2. Search page.
+
+3. Market report.
+
+4. Transaction of accept offer.
+
+5. Using mongodb to store pics. 

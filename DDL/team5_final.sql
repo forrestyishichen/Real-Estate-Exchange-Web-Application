@@ -16,7 +16,7 @@ CREATE TABLE user (
   UNIQUE KEY (email)
 );
 
-CREATE TABLE user_name (
+CREATE TABLE name (
   user_name  VARCHAR(100) NOT NULL,
   fname      VARCHAR(40) NOT NULL, 
   minit      VARCHAR(10),
@@ -169,7 +169,7 @@ INSERT user VALUES
 ('218549970', 'Medallion','pbkdf2:sha256:50000$wQLyXYoI$d69ab3ab50e0b39ba8d4e42dc4a672930cceba86b23c37c57039745a1e042086', '1966-04-16','1976 Boone Trace, Chicago, IL', 'vulputate@malesuada.com'),
 ('392076224', 'Posiratio','pbkdf2:sha256:50000$2OglOIh5$8320c2d50fc3dcd45a55657f0e9b6ecf5ba73138dadc0548dbc33213520c2e0c', '1963-06-09','417 Hancock Ave, Chicago, IL', 'viverra@turpis.com');
 
-INSERT user_name VALUES
+INSERT name VALUES
 ('Angelic', 'Colten', 'D', 'London'),
 ('Ochlocracy', 'Rosella', 'F', 'Marsden'),
 ('Epistoler', 'Evan','E','Wallis'),

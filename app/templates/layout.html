@@ -6,10 +6,10 @@
   <div class=metanav>
   {% if not session.logged_in %}
     <a href="{{ url_for('register') }}">Register</a>
-    <a href="{{ url_for('login') }}">Log In</a>
+    <a href="{{ url_for('login') }}">Login</a>
   {% else %}
     <a>Welcome, {{ session.username }}!</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
   {% endif %}
   </div>
   {% for message in get_flashed_messages() %}

@@ -36,9 +36,9 @@
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/entity/{{ entry.title }}">{{ entry.title }}</a>
+            <td><a href="/entity/{{ entry[0] }}">{{ entry[0] }}</a>
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
             </td>
           </tr>
         {% else %}
