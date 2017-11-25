@@ -1,13 +1,18 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import csv
 
-file1 = "passo.txt"
-file2 = "passh.txt"
+file1 = "pass-original.txt"
+file2 = "pass-hashed.txt"
 
-with open(file1, 'r') as f1:
+
+
+with open(file1, 'w') as f1:
     with open(file2, 'w') as f2:
-        for key in f1.readlines():
-            f2.write("'" + generate_password_hash(key) + "'" + '\n')
+        for i in range(100000001, 100000031):
+            key = str(i)
+            f1.write("'" + key + "'" + '\n')
+            h = generate_password_hash(key)
+            f2.write("'" + h + "'" + '\n')
 
 # key = "kx#a@fqmH7RKYP2"
 # hashed_key = generate_password_hash(key)
