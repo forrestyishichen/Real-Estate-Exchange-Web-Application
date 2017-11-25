@@ -12,6 +12,7 @@
           <th>Price</th>
           <th>Offer Date</th>
           <th>Agent Number</th>
+          <th>Take Action</th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,8 @@
             <td>{{ entry[3] }}
             </td>
             <td>{{ entry[4] }}
+            </td>
+            <td><a href="/accept_offer/{{ entry[0] }}">Accept</a>
             </td>
           </tr>
         {% else %}

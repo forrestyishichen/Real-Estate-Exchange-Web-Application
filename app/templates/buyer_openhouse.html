@@ -7,18 +7,22 @@
     <table class=table>
       <thead>
         <tr>
-          <th>Agent Number</th>
           <th>Property ID</th>
-          <th>Start Date</th>
+          <th>Agent Number</th>
           <th>End Date</th>
+          <th>Take Action</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a>
+            <td>{{ entry[0] }}
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td><a href="/buyeroffer/{{ entry[0] }}">I want to buy</a>
             </td>
           </tr>
         {% else %}

@@ -184,14 +184,59 @@ def agent_openhouse():
             FROM open_house WHERE agent_num = '{}'".format(session['roleid']))
         entries = []
         for row in cursor.fetchall():
-            entries.append([row[0], row[1], row[2]]) 
+            entries.append([row[0], row[1], row[2], row[3]]) 
         cursor.close()
         return render_template('agent_openhouse.html', entries=entries)
 
 '''
+Open House Register
+'''
+@app.route('/add_openhouse', methods=['GET', 'POST'])
+def add_openhouse():
+    error = None
+    if request.method == 'POST':
+        property_id = request.form['property_id']
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        if property_id == '' or start_date == '' or end_date == '':
+            error = "Missing Information!"
+            return render_template('agent_openhouse.html', error=error)
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT property_id, status, agent_num \
+            FROM property WHERE property_id='{}'" .format(property_id))
+        data = cursor.fetchone()
+        if data is None:
+            error = 'No such home!'
+            cursor.close()
+        elif data[1] == 'Sold':
+            error = 'Already Sold!'
+            cursor.close()
+        elif data[2] is not None:
+            error = 'Already registered an Open House!'
+            cursor.close()
+        else:
+            cursor.execute("SELECT count(*) FROM open_house")
+            num = cursor.fetchone()
+            conn.autocommit(False)
+            try:
+                cursor.execute("INSERT INTO open_house (agent_num, oh_num, \
+                    start_date, end_date, property_id) VALUES('{}', '{}', \
+                     '{}', '{}', '{}')" .format(session["roleid"], \
+                        ('oh_' + str(num[0] + 1)), start_date, end_date, property_id))
+                conn.commit()
+                cursor.close()
+                flash('You Open House were registered!')
+                return redirect(url_for('agent_openhouse'))
+            except:
+                error = 'There are some errors!'
+                conn.rollback()    
+    return render_template('agent_openhouse.html', error=error)
+
+'''
 Agent Page2 --- Commision managerment
 '''
-@app.route('/agentcommision', methods=['GET', 'POST'])
+@app.route('/agent_commision', methods=['GET', 'POST'])
 def agent_commision():
     error = None
     if 'username' not in session:
@@ -200,16 +245,22 @@ def agent_commision():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT total_commission, commission_rate \
-            FROM agent WHERE agent_num = '{}'".format(session['roleid']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.execute("SELECT count(offer.status)\
+            FROM offer WHERE offer.agent_num = '{}' \
+            AND offer.status = 'Deal'".format(session['roleid']))
+        data1=cursor.fetchone()
+        cursor.execute("SELECT total_commission FROM agent \
+            where agent_num = '{}'" .format(session['roleid']))
+        data2=cursor.fetchone()
+        entries =[] 
+        entries.append([data1[0],data2[0]])
         cursor.close()
         return render_template('agent_commision.html', entries=entries)
 
 '''
 Buyer Page1 --- Add offer and list offer
 '''
-@app.route('/buyeroffer/', methods=['GET', 'POST'])
+@app.route('/buyeroffer', methods=['GET', 'POST'])
 @app.route('/buyeroffer/<prperty_id>', methods=['GET', 'POST'])
 def buyer_offer(prperty_id=''):
     error = None
@@ -261,16 +312,16 @@ def add_offer():
             agent_num = data[2]
             cursor.execute("SELECT count(*) FROM offer")
             num = cursor.fetchone()
-            print(num[0])
             conn.autocommit(False)
             try:
                 cursor.execute("INSERT INTO offer (buyer_num, offer_num, \
                     price, status, offer_date, property_id, agent_num) VALUES('{}', '{}', \
-                     '{}', 'Progress', '{}', '{}', '{}')" .format(session["roleid"], (num[0] + 1) \
-                        , price, offer_date, property_id, agent_num))
+                     '{}', 'Progress', '{}', '{}', '{}')" .format(session["roleid"], \
+                        ('offer_' + str(num[0] + 1)), price, offer_date, property_id, agent_num))
                 conn.commit()
                 cursor.close()
                 flash('You Offer were registered!')
+                return redirect(url_for('buyer_offer'))
             except:
                 error = 'There are some errors!'
                 conn.rollback()    
@@ -288,12 +339,14 @@ def buyer_openhouse():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT oh.agent_num, property_id, start_date, end_date \
+        cursor.execute("SELECT property_id, oh.agent_num, end_date \
             FROM open_house oh, oh_visit ohv\
             WHERE oh.agent_num = ohv.agent_num \
                 AND oh.oh_num = ohv.oh_num \
-                AND ohv.buyer_num = '{}'".format(session['username']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+                AND ohv.buyer_num = '{}'".format(session['roleid']))
+        entries = []
+        for row in cursor.fetchall():
+            entries.append([row[0], row[1], row[2]]) 
         cursor.close()
         return render_template('buyer_openhouse.html', entries=entries)
 

@@ -7,16 +7,16 @@
     <table class=table>
       <thead>
         <tr>
+          <th>Total Accepted Offer</th>
           <th>Total Commission</th>
-          <th>Commission Rate</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a>
+            <td>{{ entry[0] }}
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
             </td>
           </tr>
         {% else %}

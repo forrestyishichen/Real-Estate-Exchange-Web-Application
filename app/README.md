@@ -29,25 +29,26 @@ User Register Form\
 Session Tracking (user, role, role_num)\
 Password Hash\
 Role's Navigator Bar
+**Property recommondation(individual page)**(main page 1)\
+**Single Property Page (with operation script)(individual page)**\
+Owner: Property register form(o1)\
+Owner: Property page(o1)\
+Buyer: Offer register form(b1)\
+Buyer: Offer page(b1)\
+Buyer: Open House page(link to offer)(b2)、
+Agent: Open House register form(a1)\
+Agent: Open House Page(a1)\
+Agent: Commision Page(a2)
+
 
 **TO DO**
 
 Serach Page(main page 1)\
+Open House serach(link to visit for buyer)(main page 2)\
 **Search Function()**\
-**Property recommondation(individual page)**(main page 1)\
-Open House serach(main page 2)\
 Market Report(main page 3)\
-**Single Property Page (with operation script)(individual page)**\
-Owner: Property register form(o1)\
-Owner: Property page(o1)\
-Owner: Offer page(o2)\
-Agent: Open House register form(a1)\
-Agent: Open House Page(a1)\
-Agent: Commision Page(a2)\
-Buyer: Offer register form(b1)\
-Buyer: Offer page(b1)\
-Buyer: Open House page(b2)\
-**Transaction for accept offer**
+Owner: Offer page(accept offer here)(o2)\
+**Transaction function for accept offer**
 
 ## Extra
 
