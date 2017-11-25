@@ -8,34 +8,37 @@ USE teamfive;
 
 CREATE TABLE user (
   ssn        CHAR(9) NOT NULL,
-  user_name  VARCHAR(25) NOT NULL,
-  password   VARCHAR(25) NOT NULL,
+  user_name  VARCHAR(100) NOT NULL,
+  password   VARCHAR(100) NOT NULL,
   bdate      DATE,
-  address    VARCHAR(50),
-  email      VARCHAR(25) NOT NULL,
-  PRIMARY KEY (user_name),
-  UNIQUE KEY (ssn),
+  address    VARCHAR(100),
+  email      VARCHAR(100) NOT NULL,
+  PRIMARY KEY (ssn),
+  UNIQUE KEY (user_name),
   UNIQUE KEY(email)
 );
 
 CREATE TABLE user_name (
-  user_name  VARCHAR(25) NOT NULL,
-  fname      VARCHAR(15) NOT NULL, 
-  minit      VARCHAR(1),
-  lname      VARCHAR(15) NOT NULL,
+  user_name  VARCHAR(100) NOT NULL,
+  fname      VARCHAR(40) NOT NULL, 
+  minit      VARCHAR(10),
+  lname      VARCHAR(40) NOT NULL,
   PRIMARY KEY (user_name),
   FOREIGN KEY (user_name) REFERENCES user(user_name)
         ON DELETE CASCADE
 );
 
+###fix diagram
+
 CREATE TABLE user_phone (
   ssn     CHAR(9) NOT NULL,
-  primary_phone   VARCHAR(15),
-  second_phone    VARCHAR(15),
-  PRIMARY KEY (ssn),
+  phone   VARCHAR(15),
+  PRIMARY KEY (ssn, phone),
   FOREIGN KEY (ssn) REFERENCES user(ssn)
         ON DELETE CASCADE
 );
+
+
 
 CREATE TABLE owner (
   owner_num  VARCHAR(15) NOT NULL,
@@ -75,7 +78,7 @@ CREATE TABLE property (
   list_date    DATE,
   sold_date    DATE,
   owner_num    VARCHAR(15) NOT NULL,
-  agent_num    VARCHAR(15) NOT NULL,
+  agent_num    VARCHAR(15) ,
   PRIMARY KEY (property_id),
   FOREIGN KEY (owner_num) REFERENCES owner(owner_num)
     ON DELETE CASCADE,
@@ -205,6 +208,37 @@ INSERT user_name VALUES
 ('Posiratio', 'Helga','C','Pataki');
 
 INSERT user_phone VALUES
+('085669980', '518-555-0137'),
+('235090001', '518-555-0160'),
+('578568678', '518-555-0145'),
+('036078043', '410-555-0114'),
+('587522934', '410-555-0128', '410-555-0189'),
+('395404942', '410-555-0146', '410-555-0186'),
+('001487368', '775-555-0152', '775-555-0123'),
+('515827834', '775-555-0189', '775-555-0195'),
+('520196480', '775-555-0136', '775-555-0148'),
+('504342542', '843-555-0187', '843-555-0178'),
+('021306756', '843-555-0172', '843-555-0134'),
+('501286917', '843-555-0114', '843-555-0179'),
+('008849203', '843-555-0172', '843-575-0272'),
+('577228421', '843-555-0164', '843-455-0264'),
+('389156190', '843-555-0132', '843-552-0182'),
+('648227273', '202-555-0172', '202-586-0172'),
+('506880757', '202-555-0105', '202-955-0105'),
+('085304579', '202-555-0145', '202-555-0159'),
+('393309045', '202-555-0156', '202-905-0156'),
+('522407366', '202-555-0174', '202-525-0174'),
+('003389041', '617-555-0110', '617-945-0110'),
+('640804931', '617-555-0169', '617-003-0169'),
+('059161255', '617-555-0148', '617-555-0189'),
+('574823410', '302-555-0104', '302-555-9104'),
+('509429536', '302-555-0137', '302-535-0173'),
+('215718002', '302-555-0174', '302-734-0174'),
+('471022680', '302-555-0119', '302-553-0187'),
+('396484738', '302-555-0196', '302-823-0296'),
+('218549970', '614-555-0111', '614-555-0341'),
+('392076224', '614-555-0152', '614-505-0342'),
+
 ('085669980', '518-555-0137', '518-555-0146'),
 ('235090001', '518-555-0160', '518-555-0128'),
 ('578568678', '518-555-0145', '518-555-0148'),
@@ -237,7 +271,7 @@ INSERT user_phone VALUES
 ('392076224', '614-555-0152', '614-505-0342');
 
 INSERT agent VALUES
-('a001', '392076224', 222903.23, 0.03),
+('agent_1', '392076224', 222903.23, 0.03),
 ('a002', '218549970', 213223.78, 0.025),
 ('a003', '396484738', 134223.65, 0.04),
 ('a004', '471022680', 230066.40, 0.0275),
@@ -245,8 +279,8 @@ INSERT agent VALUES
 ('a006', '509429536', 292429.48, 0.05);
 
 INSERT buyer VALUES
-('b001', '085669980'),
-('b002', '235090001'),
+('buyer_1', '085669980'),
+('buyer_2', '235090001'),
 ('b003', '578568678'),
 ('b004', '036078043'),
 ('b005', '587522934'),
@@ -263,7 +297,7 @@ INSERT buyer VALUES
 ('b016', '648227273');
 
 INSERT owner VALUES
-('o001', '506880757', 'b002', 'offer001'),
+('owner_1', '506880757', 'b002', 'offer001'),
 ('o002', '085304579', 'b005', 'offer004'),
 ('o003', '393309045', 'b012', 'offer003'),
 ('o004', '522407366', 'b006', 'offer006'),
@@ -340,7 +374,7 @@ INSERT offer VALUES
 ALTER TABLE owner ADD CONSTRAINT FK_owner_offer_num FOREIGN KEY (offer_num) REFERENCES offer(offer_num); */
 
 INSERT oh_visit VALUES
-('b002', 'a002', 'oh001'),
+('b002', 'a002', 'oh_1'),
 ('b010', 'a002', 'oh001'),
 ('b011', 'a001', 'oh002'),
 ('b003', 'a004', 'oh003'),
