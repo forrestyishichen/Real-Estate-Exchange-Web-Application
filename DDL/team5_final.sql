@@ -41,9 +41,9 @@ CREATE TABLE owner (
   ssn        CHAR(9) NOT NULL,
   buyer_num  VARCHAR(15),
   offer_num  VARCHAR(15),
-  PRIMARY KEY (owner_num)
+  PRIMARY KEY (owner_num),
   FOREIGN KEY (ssn) REFERENCES user(ssn)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
   FOREIGN KEY (buyer_num, offer_num) REFERENCES offer(buyer_num,offer_num)
     ON DELETE SET NULL
 );
@@ -137,8 +137,6 @@ CREATE TABLE oh_visit (
       ON DELETE CASCADE
 );
 
-# INSERT
-
 INSERT user VALUES
 ('085669980', 'Angelic', 'kx#a@fqmH7RKYP2', '1978-05-22', '1967 Jordan, Milwaukee, WI', 'irsocorro@fafire.br'),
 ('235090001', 'Ochlocracy', ']~Rz`Xq!~:7T,]F', '1968-02-13', '176 Main St., Atlanta, GA', 'malak.el.10420@priceonline.co'),
@@ -195,7 +193,7 @@ INSERT user_name VALUES
 ('Esclavage', 'Bob','B','Bender'),
 ('Dissemble', 'Jill','J','Jarvis'),
 ('Lovable', 'Kate','W','King'),
-('Melodywis5656'，'Lyle','G','Leslie'),
+('Melodywis5656','Lyle','G','Leslie'),
 ('Nacarat', 'Billie','J','King'),
 ('Cereology', 'Jon','A','Kramer'),
 ('Portico', 'Ray','H','King'),
@@ -234,7 +232,6 @@ INSERT user_phone VALUES
 ('396484738', '302-555-0196'),
 ('218549970', '614-555-0111'),
 ('392076224', '614-555-0152'),
-/**/
 ('085669980', '518-555-0146'),
 ('235090001', '518-555-0128'),
 ('578568678', '518-555-0148'),
@@ -268,11 +265,11 @@ INSERT user_phone VALUES
 
 INSERT agent VALUES
 ('agent_1', '392076224', 222903.23, 0.03),
-('agent_2', '218549970', 213223.78, 0.025),
-('agent_3', '396484738', 134223.65, 0.04),
-('agent_4', '471022680', 230066.40, 0.0275),
-('agent_5', '215718002', 118955.23, 0.035),
-('agent_6', '509429536', 292429.48, 0.05);
+('agent_2', '218549970', 213223.78, 0.03),
+('agent_3', '396484738', 134223.65, 0.03),
+('agent_4', '471022680', 230066.40, 0.03),
+('agent_5', '215718002', 118955.23, 0.03),
+('agent_6', '509429536', 292429.48, 0.03);
 
 INSERT buyer VALUES
 ('buyer_1', '085669980'),
@@ -383,6 +380,5 @@ INSERT oh_visit VALUES
 ('buyer_1', 'agent_1', 'oh_9'),
 ('buyer_14', 'agent_3', 'oh_10'),
 ('buyer_16', 'agent_5', 'oh_11');
-
 
 SET foreign_key_checks = 1;
