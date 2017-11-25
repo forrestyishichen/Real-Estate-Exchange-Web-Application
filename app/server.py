@@ -12,8 +12,8 @@ init
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'any random string'
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '880112'
+app.config['MYSQL_DATABASE_USER'] = 'ys'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'ysys'
 app.config['MYSQL_DATABASE_DB'] = 'teamfive'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -127,8 +127,11 @@ def agent_openhouse():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.execute("SELECT oh_num, property_id, start_date, end_date  \
+            FROM open_house WHERE agent_num = '{}'".format(session['roleid']))
+        entries = []
+        for row in cursor.fetchall():
+            entries.append([row[0], row[1], row[2]]) 
         cursor.close()
         return render_template('agent_openhouse.html', entries=entries)
 
@@ -144,7 +147,8 @@ def agent_commision():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        cursor.execute("SELECT total_commission, commission_rate \
+            FROM agent WHERE agent_num = '{}'".format(session['roleid']))
         entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
         cursor.close()
         return render_template('agent_commision.html', entries=entries)
@@ -162,9 +166,11 @@ def buyer_offer(prperty_id=''):
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
-        id = prperty_id
+        cursor.execute("SELECT offer_num, property_id, price, offer_date, status, agent_num \
+            FROM offer WHERE buyer_num = '{}'".format(session['roleid']))
+        entries = []
+        for row in cursor.fetchall():
+            entries.append([row[0], row[1], row[2], row[3], row[4], row[5]]) 
         cursor.close()
         return render_template('buyer_offer.html', entries=entries, id=id)
 
@@ -180,7 +186,11 @@ def buyer_openhouse():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
+        cursor.execute("SELECT oh.agent_num, property_id, start_date, end_date \
+            FROM open_house oh, oh_visit ohv\
+            WHERE oh.agent_num = ohv.agent_num \
+                AND oh.oh_num = ohv.oh_num \
+                AND ohv.buyer_num = '{}'".format(session['username']))
         entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
         cursor.close()
         return render_template('buyer_openhouse.html', entries=entries)
