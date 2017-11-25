@@ -23,14 +23,16 @@
     </dl>
   </form>
   <br>
-  <h2>Market Overview</h2>
+  <h2>Property List</h2>
   <br>
   <ul class=entries>
     <table class=table>
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Password</th>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Area</th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +41,10 @@
             <td><a href="/entity/{{ entry[0] }}">{{ entry[0] }}</a>
             </td>
             <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
             </td>
           </tr>
         {% else %}
