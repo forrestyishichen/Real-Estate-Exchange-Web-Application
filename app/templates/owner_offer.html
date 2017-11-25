@@ -7,16 +7,25 @@
     <table class=table>
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Password</th>
+          <th>Property ID</th>
+          <th>Offer Number</th>
+          <th>Price</th>
+          <th>Offer Date</th>
+          <th>Agent Number</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a>
+            <td>{{ entry[0] }}
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+            <td>{{ entry[4] }}
             </td>
           </tr>
         {% else %}

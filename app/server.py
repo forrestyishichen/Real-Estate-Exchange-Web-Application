@@ -52,15 +52,14 @@ Main Page 1 --- Property Search with recommendation
 def search_property():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from property")
-    '''
-    '''
+    cursor.execute("SELECT property.property_id, property.status, \
+        property.price, property_parameter.area from property inner \
+        join property_parameter on property.property_id = \
+        property_parameter.property_id")
     entries = []
     for i in range(3):
         row = cursor.fetchone()
-        entries.append([row[0], row[1]])
-    # entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
-    print(entries)
+        entries.append([row[0], row[1], row[2], row[3]])
     cursor.close()
     return render_template('search_property.html', entries=entries)
 
@@ -93,10 +92,53 @@ def owner_property():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.execute("SELECT * from property where owner_num = '{}'" .format(session['roleid']))
+        entries = []
+        for row in cursor.fetchall():
+            entries.append([row[0], row[1]])
         cursor.close()
         return render_template('owenr_property.html', entries=entries)
+
+'''
+Property Register
+'''
+
+@app.route('/addproperty', methods=['GET', 'POST'])
+def addproperty():
+    error = None
+    if request.methods == 'POST':
+        property_id = request.form['property_id']
+        asking_price = request.form['asking_price']
+        room_num = request.form['room_num']
+        bath_num = request.form['bath_num']
+        garage_num = request.form['garage_num']
+        lot_size = request.form['lot_size']
+        zip_code = request.form['zip_code']
+        area = request.form['area']
+        list_date = request.form['list_date']
+
+        if property_id == '' or owner_num == '':
+            error = "Missing Information!"
+            return render_template('owenr_property.html', error=error)
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM property WHERE property_id='{}'" .format(property_id))
+        data = cursor.fetchone()
+        if data is not None:
+            error = 'Duplicate Property ID!'
+            cursor.close()
+        else:
+            conn.autocommit(False)
+            try:
+                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
+                cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+                conn.commit()
+                cursor.close()
+                flash('You Home were registered!')
+            except:
+                conn.rollback()    
+    return render_template('owenr_property.html', error=error)
 
 '''
 Owner Page2 --- Offer managerment
@@ -110,8 +152,12 @@ def owner_offer():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from user where username = '{}'".format(session['username']))
-        entries = [dict(title=row[0], text=row[1]) for row in cursor.fetchall()]
+        cursor.execute("SELECT offer.property_id, offer.offer_num, offer.price, offer.offer_date, offer.agent_num \
+            from offer inner join property on offer.property_id = property.property_id \
+            where property.owner_num = '{}'".format(session['roleid']))
+        entries = []
+        for row in cursor.fetchall():
+            entries.append([row[0], row[1], row[2], row[3], row[4]])
         cursor.close()
         return render_template('owner_offer.html', entries=entries)
 
@@ -212,7 +258,7 @@ TO DO **** transaction, add
 #     return redirect(url_for('show_entries'))
 
 '''
-Login
+User Login
 '''
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -229,11 +275,9 @@ def login():
         cursor = conn.cursor()
         cursor.execute("SELECT password, ssn from user where user_name= '{}'" .format(username))
         data = cursor.fetchone()
-        print (data)
         if data == None:
             error = 'Invalid username and password'
         elif check_password_hash(data[0], password):
-            print("yes")
             session['logged_in'] = True
             session['username'] = username
             session['rolename'] = role
@@ -261,7 +305,7 @@ def login():
     return render_template('login.html', error=error)
 
 '''
-Register
+User Register
 '''
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -334,21 +378,22 @@ Detail page
 TO DO **** list detail and action
 '''
 
-@app.route('/entity/<prperty_id>', methods=['GET'])
-def show_property_profile(prperty_id):
+@app.route('/entity/<property_id>', methods=['GET'])
+def show_property_profile(property_id):
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT * from user where username='" + prperty_id + "'")
-    entries = [dict(id=row[0], status=row[1])
-        # , price=row[2],\
-     # room_num=row[3], bath_num=row[4], garage_num=row[5],\
-     # lot_size=row[6], zip_code=row[7], area=row[8]) \
-     for row in cursor.fetchall()]
+    cursor.execute("SELECT property.property_id, property.status, \
+        property.price, property_parameter.room_num, property_parameter.bath_num, \
+        property_parameter.garage_num, property_parameter.lot_size, \
+        property_parameter.zip_code, property_parameter.area from property inner \
+        join property_parameter on property.property_id = \
+        property_parameter.property_id where property.property_id = '{}'" .format(property_id))
+
+    entries = []
+    for row in cursor.fetchall():
+        entries.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]])
     cursor.close()
-    if entries is not None:
-        return render_template('property_detail.html', entries=entries)
-    else:
-        return render_template('page_not_found.html'), 404
+    return render_template('property_detail.html', entries=entries)
 
 '''
 404
