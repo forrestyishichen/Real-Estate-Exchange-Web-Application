@@ -131,12 +131,16 @@ def addproperty():
         else:
             conn.autocommit(False)
             try:
-                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
-                cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+                print("0")
+                cursor.execute("INSERT INTO property (property_id, status, asking_price, list_date, owner_num) VALUES('{}', 'On Sale', '{}', '{}', '{}')" .format(property_id, asking_price, list_date, session['roleid']))
+                print("1")
+                cursor.execute("INSERT INTO property_parameter (property_id, room_num, bath_num, garage_num, lot_size, zip_code, area) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')" .format(property_id, room_num, bath_num, garage_num, lot_size, zip_code, area))
+                print("2")
                 conn.commit()
                 cursor.close()
                 flash('You Home were registered!')
             except:
+                error = 'There are some errors!'
                 conn.rollback()    
     return render_template('owenr_property.html', error=error)
 
