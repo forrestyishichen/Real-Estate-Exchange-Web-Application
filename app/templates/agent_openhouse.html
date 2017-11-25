@@ -2,6 +2,7 @@
 {% block body %}
 {% if session.logged_in %}
   <h2>Add an Open House</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
    <form action="#" method=post class=add-entry>
     <dl>
       <dt>ID:

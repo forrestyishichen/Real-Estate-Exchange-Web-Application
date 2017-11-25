@@ -157,7 +157,8 @@ def owner_offer():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT offer.property_id, offer.offer_num, offer.price, offer.offer_date, offer.agent_num \
+        cursor.execute("SELECT offer.property_id, offer.offer_num, offer.price, \
+            offer.offer_date, offer.agent_num \
             from offer inner join property on offer.property_id = property.property_id \
             where property.owner_num = '{}'".format(session['roleid']))
         entries = []
@@ -165,6 +166,7 @@ def owner_offer():
             entries.append([row[0], row[1], row[2], row[3], row[4]])
         cursor.close()
         return render_template('owner_offer.html', entries=entries)
+
 
 '''
 Agent Page1 --- Add Openhouse and list Openhouse
@@ -223,7 +225,56 @@ def buyer_offer(prperty_id=''):
         for row in cursor.fetchall():
             entries.append([row[0], row[1], row[2], row[3], row[4], row[5]]) 
         cursor.close()
-        return render_template('buyer_offer.html', entries=entries, id=id)
+        return render_template('buyer_offer.html', entries=entries, id=prperty_id)
+
+
+'''
+Offer Register
+'''
+@app.route('/add_offer', methods=['GET', 'POST'])
+def add_offer():
+    error = None
+    if request.method == 'POST':
+        property_id = request.form['property_id']
+        price = request.form['price']
+        offer_date = request.form['offer_date']
+
+        if property_id == '' or price == '' or offer_date == '':
+            error = "Missing Information!"
+            return render_template('buyer_offer.html', error=error)
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT property.status, owner.ssn, property.agent_num \
+            FROM property inner join owner on property.owner_num = owner.owner_num \
+            WHERE property.property_id='{}'" .format(property_id))
+        data = cursor.fetchone()
+        if data is None:
+            error = 'No such home!'
+            cursor.close()
+        elif data[0] == 'Sold':
+            error = 'Already Sold!'
+            cursor.close()
+        elif data[1] == session['ssn']:
+            error = 'This is your own House!'
+            cursor.close()
+        else:
+            agent_num = data[2]
+            cursor.execute("SELECT count(*) FROM offer")
+            num = cursor.fetchone()
+            print(num[0])
+            conn.autocommit(False)
+            try:
+                cursor.execute("INSERT INTO offer (buyer_num, offer_num, \
+                    price, status, offer_date, property_id, agent_num) VALUES('{}', '{}', \
+                     '{}', 'Progress', '{}', '{}', '{}')" .format(session["roleid"], (num[0] + 1) \
+                        , price, offer_date, property_id, agent_num))
+                conn.commit()
+                cursor.close()
+                flash('You Offer were registered!')
+            except:
+                error = 'There are some errors!'
+                conn.rollback()    
+    return render_template('buyer_offer.html', error=error)
 
 '''
 Buyer Page2 --- Open House managerment

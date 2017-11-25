@@ -2,7 +2,8 @@
 {% block body %}
 {% if session.logged_in %}
   <h2>Submit My Offer</h2>
-  <form action="#" method=post class=add-entry>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <form action="{{ url_for('add_offer') }}" method=post class=add-entry>
     <dl>
       <dt>ID:
       <dd><input type=text size=30 name=property_id value="{{ id }}">
@@ -10,7 +11,7 @@
       <dd><input type=text size=30 name=price>
       <dt>Date:
       <dd><input type=text size=30 name=offer_date>
-      <dd><input type=submit value=submit>
+      <dd><input type=submit value=Submit>
     </dl>
   </form>
   <br>
@@ -31,9 +32,15 @@
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/entity/{{ entry.title }}">{{ entry.title }}</a>
+            <td>{{ entry[0] }}
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+            <td>{{ entry[4] }}
             </td>
           </tr>
         {% else %}
