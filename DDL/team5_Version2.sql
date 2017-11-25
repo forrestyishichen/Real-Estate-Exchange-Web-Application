@@ -74,7 +74,7 @@ CREATE TABLE property (
   list_date    DATE,
   sold_date    DATE,
   owner_num    VARCHAR(15) NOT NULL,
-  agent_num    VARCHAR(15) ,
+  agent_num    VARCHAR(15),
   PRIMARY KEY (property_id),
   FOREIGN KEY (owner_num) REFERENCES owner(owner_num)
     ON DELETE CASCADE,
@@ -344,17 +344,17 @@ INSERT property_parameter VALUES
 ('property_18', 2, 2, 0, 1189, 'CA 94105', 'San Francisco');
 
 INSERT open_house VALUES
-('agent_2', 'openhouse_1', '2017-03-20', '2017-05-20', 'property_3'),
-('agent_1', 'openhouse_2', '2016-10-28', '2016-11-16', 'property_1'),
-('agent_4', 'openhouse_3', '2016-05-25', '2016-07-26', 'property_5'),
-('agent_4', 'openhouse_4', '2017-05-20', '2017-08-20', 'property_7'),
-('agent_2', 'openhouse_5', '2017-08-25', '2017-10-25', 'property_9'),
-('agent_2', 'openhouse_6', '2017-10-10', '2017-11-10', 'property_10'),
-('agent_3', 'openhouse_7', '2016-08-04', '2016-09-04', 'property_13'),
-('agent_1', 'openhouse_8', '2017-09-30', '2017-10-20', 'property_15'),
-('agent_1', 'openhouse_9', '2017-11-07', '2017-11-18', 'property_16'),
-('agent_3', 'openhouse_10', '2017-10-07', '2017-11-07', 'property_17'),
-('agent_5', 'openhouse_11', '2017-11-03', '2017-11-13', 'property_18');
+('agent_2', 'oh_1', '2017-03-20', '2017-05-20', 'property_3'),
+('agent_1', 'oh_2', '2016-10-28', '2016-11-16', 'property_1'),
+('agent_4', 'oh_3', '2016-05-25', '2016-07-26', 'property_5'),
+('agent_4', 'oh_4', '2017-05-20', '2017-08-20', 'property_7'),
+('agent_2', 'oh_5', '2017-08-25', '2017-10-25', 'property_9'),
+('agent_2', 'oh_6', '2017-10-10', '2017-11-10', 'property_10'),
+('agent_3', 'oh_7', '2016-08-04', '2016-09-04', 'property_13'),
+('agent_1', 'oh_8', '2017-09-30', '2017-10-20', 'property_15'),
+('agent_1', 'oh_9', '2017-11-07', '2017-11-18', 'property_16'),
+('agent_3', 'oh_10', '2017-10-07', '2017-11-07', 'property_17'),
+('agent_5', 'oh_11', '2017-11-03', '2017-11-13', 'property_18');
 
 INSERT offer VALUES
 ('buyer_2', 'offer_1', 835000.00, 'Deal', '2016-11-27', 'property_1', 'agent_1'),
@@ -370,19 +370,19 @@ INSERT offer VALUES
 ALTER TABLE owner ADD CONSTRAINT FK_owner_offer_num FOREIGN KEY (offer_num) REFERENCES offer(offer_num); */
 
 INSERT oh_visit VALUES
-('buyer_2', 'agent_2', 'openhouse_1'),
-('buyer_10', 'agent_2', 'openhouse_1'),
-('buyer_11', 'agent_1', 'openhouse_2'),
-('buyer_3', 'agent_4', 'openhouse_3'),
-('buyer_5', 'agent_4', 'openhouse_4'),
-('buyer_13', 'agent_2', 'openhouse_5'),
-('buyer_12', 'agent_2', 'openhouse_6'),
-('buyer_9', 'agent_3', 'openhouse_7'),
-('buyer_17', 'agent_3', 'openhouse_7'),
-('buyer_2', 'agent_1', 'openhouse_8'),
-('buyer_1', 'agent_1', 'openhouse_9'),
-('buyer_14', 'agent_3', 'openhouse_10'),
-('buyer_16', 'agent_5', 'openhouse_11');
+('buyer_2', 'agent_2', 'oh_1'),
+('buyer_10', 'agent_2', 'oh_1'),
+('buyer_11', 'agent_1', 'oh_2'),
+('buyer_3', 'agent_4', 'oh_3'),
+('buyer_5', 'agent_4', 'oh_4'),
+('buyer_13', 'agent_2', 'oh_5'),
+('buyer_12', 'agent_2', 'oh_6'),
+('buyer_9', 'agent_3', 'oh_7'),
+('buyer_17', 'agent_3', 'oh_7'),
+('buyer_2', 'agent_1', 'oh_8'),
+('buyer_1', 'agent_1', 'oh_9'),
+('buyer_14', 'agent_3', 'oh_10'),
+('buyer_16', 'agent_5', 'oh_11');
 
 
 SET foreign_key_checks = 1;
