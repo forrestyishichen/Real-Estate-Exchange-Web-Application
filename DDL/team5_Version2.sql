@@ -1,141 +1,146 @@
 SET foreign_key_checks = 0;
-drop database if exists teamfive;
-create database teamfive;
-use teamfive;
+
+DROP DATABASE IF EXISTS teamfive;
+
+CREATE DATABASE teamfive;
+
+USE teamfive;
 
 CREATE TABLE user (
-  ssn        char(9) not null,
-  user_name  varchar(25) not null,
-  password   varchar(25) not null,
-  bdate      date,
-  address    varchar(50),
-  email      varchar(25) not null,
-  primary key (user_name),
-  unique (ssn, email)
+  ssn        CHAR(9) NOT NULL,
+  user_name  VARCHAR(25) NOT NULL,
+  password   VARCHAR(25) NOT NULL,
+  bdate      DATE,
+  address    VARCHAR(50),
+  email      VARCHAR(25) NOT NULL,
+  PRIMARY KEY (user_name),
+  UNIQUE KEY (ssn),
+  UNIQUE KEY(email)
 );
 
 CREATE TABLE user_name (
-  user_name  varchar(25) not null,
-  fname      varchar(15) not null, 
-  minit      varchar(1),
-  lname      varchar(15) not null,
-  primary key (user_name),
-  foreign key(user_name) references user(user_name)
+  user_name  VARCHAR(25) NOT NULL,
+  fname      VARCHAR(15) NOT NULL, 
+  minit      VARCHAR(1),
+  lname      VARCHAR(15) NOT NULL,
+  PRIMARY KEY (user_name),
+  FOREIGN KEY (user_name) REFERENCES user(user_name)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE user_phone (
-  ssn     char(9) not null,
-  primary_phone   varchar(15),
-  second_phone    varchar(15),
-  primary key (ssn),
-  foreign key (ssn) references user(ssn)
-   on delete cascade
+  ssn     CHAR(9) NOT NULL,
+  primary_phone   VARCHAR(15),
+  second_phone    VARCHAR(15),
+  PRIMARY KEY (ssn),
+  FOREIGN KEY (ssn) REFERENCES user(ssn)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE owner (
-  owner_num  varchar(15) not null,
-  ssn        char(9) not null,
-  buyer_num  varchar(15) not null,
-  offer_num  varchar(15) not null,
-  primary key (owner_num)
-  foreign key (ssn) references user(ssn)
-   on delete cascade,
-  /*foreign key (buyer_num,offer_num) references offer(buyer_num,offer_num)
-   on delete set null**/
+  owner_num  VARCHAR(15) NOT NULL,
+  ssn        CHAR(9) NOT NULL,
+  buyer_num  VARCHAR(15),
+  offer_num  VARCHAR(15),
+  PRIMARY KEY (owner_num)
+  FOREIGN KEY (ssn) REFERENCES user(ssn)
+    ON DELETE CASCADE
+  FOREIGN KEY (buyer_num, offer_num) REFERENCES offer(buyer_num,offer_num)
+    ON DELETE SET NULL
 );
 
 CREATE TABLE agent (
-  agent_num        varchar(15) not null,
-  ssn              char(9) not null,
-  total_commission decimal(10,2),
-  commission_rate  decimal(3,2) check (commission_rate > 0 and commission_rate < 1), 
-  primary key (agent_num),
-  foreign key (ssn) references user(ssn)
-   on delete cascade
+  agent_num        VARCHAR(15) NOT NULL,
+  ssn              CHAR(9) NOT NULL,
+  total_commission DECIMAL(10,2),
+  commission_rate  DECIMAL(3,2) CHECK (commission_rate > 0 AND commission_rate < 1), 
+  PRIMARY KEY (agent_num),
+  FOREIGN KEY (ssn) REFERENCES user(ssn)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE buyer (
-  buyer_num  varchar(15) not null,
-  ssn        char(9) not null,
-  primary key (buyer_num),
-  foreign key (ssn) references user(ssn)
-   on delete cascade
+  buyer_num  VARCHAR(15) NOT NULL,
+  ssn        CHAR(9) NOT NULL,
+  PRIMARY KEY (buyer_num),
+  FOREIGN KEY (ssn) REFERENCES user(ssn)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE property (
-  property_id  varchar(15) not null,
-  status       varchar(15) not null,
-  price        decimal(15,2) check (price > 0),
-  asking_price decimal(15,2) check (asking_price > 0),
-  list_date    date,
-  sold_date    date,
-  owner_num    varchar(15) not null,
-  agent_num    varchar(15) not null,
-  primary key (property_id),
-  foreign key (owner_num) references owner(owner_num)
-   on delete set null,
-  foreign key (agent_num) references agent(agent_num)
-   on delete set null
+  property_id  VARCHAR(15) NOT NULL,
+  status       VARCHAR(15) NOT NULL,
+  price        DECIMAL(15,2) CHECK (price > 0),
+  asking_price DECIMAL(15,2) CHECK (asking_price > 0),
+  list_date    DATE,
+  sold_date    DATE,
+  owner_num    VARCHAR(15) NOT NULL,
+  agent_num    VARCHAR(15) NOT NULL,
+  PRIMARY KEY (property_id),
+  FOREIGN KEY (owner_num) REFERENCES owner(owner_num)
+    ON DELETE CASCADE,
+  FOREIGN KEY (agent_num) REFERENCES agent(agent_num)
+    ON DELETE SET NULL
 );
 
 CREATE TABLE property_parameter (
-  property_id  varchar(15) not null,
-  room_num     integer,
-  bath_num     integer,
-  garage_num   integer,
-  lot_size     integer,
-  zip_code     varchar(15),
-  area         varchar(15),
-  primary key (property_id), 
-  foreign key (property_id) references property (property_id)
-  on delete cascade
+  property_id  VARCHAR(15) NOT NULL,
+  room_num     INTEGER,
+  bath_num     INTEGER,
+  garage_num   INTEGER,
+  lot_size     INTEGER,
+  zip_code     VARCHAR(15),
+  area         VARCHAR(15),
+  PRIMARY KEY (property_id), 
+  FOREIGN KEY (property_id) REFERENCES property (property_id)
+        ON DELETE CASCADE
 );
 
 
 CREATE TABLE open_house (
-  agent_num    varchar(15) not null,
-  oh_num       varchar(15) not null,
-  start_date   date,
-  end_date     date,
-  property_id  varchar(15) not null,
-  primary key (agent_num, oh_num),
-  foreign key (agent_num) references agent(agent_num)
-   on delete cascade,
-  foreign key (property_id) references property(property_id)
-   on delete cascade
+  agent_num    VARCHAR(15) NOT NULL,
+  oh_num       VARCHAR(15) NOT NULL,
+  start_date   DATE,
+  end_date     DATE,
+  property_id  VARCHAR(15) NOT NULL,
+  PRIMARY KEY (agent_num, oh_num),
+  FOREIGN KEY (agent_num) REFERENCES agent(agent_num)
+        ON DELETE CASCADE,
+  FOREIGN KEY (property_id) REFERENCES property(property_id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE offer (
-  buyer_num   varchar(15) not null,
-  offer_num   varchar(15) not null,
-  price       decimal(15,2) check (price > 0),
-  status      varchar(15) not null,
-  offer_date  date,
-  property_id varchar(15) not null,
-  agent_num   varchar(15) not null,
-  primary key (buyer_num, offer_num),
-  foreign key (buyer_num) references buyer(buyer_num)
-   on delete cascade,
-  foreign key (property_id) references property(property_id)
-   on delete cascade,
-  foreign key (agent_num) references agent(agent_num)
-   on delete cascade
+  buyer_num   VARCHAR(15) NOT NULL,
+  offer_num   VARCHAR(15) NOT NULL,
+  price       DECIMAL(15,2) CHECK (price > 0),
+  status      VARCHAR(15) NOT NULL,
+  offer_date  DATE,
+  property_id VARCHAR(15) NOT NULL,
+  agent_num   VARCHAR(15) NOT NULL,
+  PRIMARY KEY (buyer_num, offer_num),
+  FOREIGN KEY (buyer_num) REFERENCES buyer(buyer_num)
+        ON DELETE CASCADE,
+  FOREIGN KEY (property_id) REFERENCES property(property_id)
+        ON DELETE CASCADE,
+  FOREIGN KEY (agent_num) REFERENCES agent(agent_num)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE oh_visit (
-  buyer_num   varchar(15) not null,
-  agent_num    varchar(15) not null,
-  oh_num       varchar(15) not null,
-  primary key (buyer_num, agent_num, oh_num),
-  foreign key (buyer_num) references buyer(buyer_num)
-   on delete cascade,
-  foreign key (agent_num, oh_num) references open_house(agent_num, oh_num)
-   on delete cascade
+  buyer_num    VARCHAR(15) NOT NULL,
+  agent_num    VARCHAR(15) NOT NULL,
+  oh_num       VARCHAR(15) NOT NULL,
+  PRIMARY KEY (buyer_num, agent_num, oh_num),
+  FOREIGN KEY (buyer_num) REFERENCES buyer(buyer_num)
+      ON DELETE CASCADE,
+  FOREIGN KEY (agent_num, oh_num) REFERENCES open_house(agent_num, oh_num)
+      ON DELETE CASCADE
 );
 
-#insert
+# INSERT
 
-insert user values
+INSERT user VALUES
 ('085669980', 'Angelic', 'kx#a@fqmH7RKYP2', '1978-05-22', '1967 Jordan, Milwaukee, WI', 'irsocorro@fafire.br'),
 ('235090001', 'Ochlocracy', ']~Rz`Xq!~:7T,]F', '1968-02-13', '176 Main St., Atlanta, GA', 'malak.el.10420@priceonline.co'),
 ('578568678', 'Epistoler', 'gV2A7B8SC{2gyth', '1958-01-16','134 Pelham, Milwaukee, WI', 'Trae1940@fleckens.hu'),
@@ -167,7 +172,7 @@ insert user values
 ('218549970', 'Medallion', '8:yjVDs9_89D', '1966-04-16','1976 Boone Trace, Chicago, IL', 'vulputate@malesuada.com'),
 ('392076224', 'Posiratio', '5L45uD5nq%M&', '1963-06-09','417 Hancock Ave, Chicago, IL', 'viverra@turpis.com');
 
-insert user_name values
+INSERT user_name VALUES
 ('Angelic', 'Colten', 'D', 'London'),
 ('Ochlocracy', 'Rosella', 'F', 'Marsden'),
 ('Epistoler', 'Evan','E','Wallis'),
@@ -199,7 +204,7 @@ insert user_name values
 ('Medallion', 'Arnold','A','Head'),
 ('Posiratio', 'Helga','C','Pataki');
 
-insert user_phone values
+INSERT user_phone VALUES
 ('085669980', '518-555-0137', '518-555-0146'),
 ('235090001', '518-555-0160', '518-555-0128'),
 ('578568678', '518-555-0145', '518-555-0148'),
@@ -231,7 +236,7 @@ insert user_phone values
 ('218549970', '614-555-0111', '614-555-0341'),
 ('392076224', '614-555-0152', '614-505-0342');
 
-insert agent values
+INSERT agent VALUES
 ('a001', '392076224', 222903.23, 0.03),
 ('a002', '218549970', 213223.78, 0.025),
 ('a003', '396484738', 134223.65, 0.04),
@@ -239,7 +244,7 @@ insert agent values
 ('a005', '215718002', 118955.23, 0.035),
 ('a006', '509429536', 292429.48, 0.05);
 
-insert buyer values
+INSERT buyer VALUES
 ('b001', '085669980'),
 ('b002', '235090001'),
 ('b003', '578568678'),
@@ -252,12 +257,12 @@ insert buyer values
 ('b010', '504342542'),
 ('b011', '021306756'),
 ('b012', '501286917'),
-('b013','008849203'),
-('b014','577228421'),
-('b015','389156190'),
-('b016','648227273');
+('b013', '008849203'),
+('b014', '577228421'),
+('b015', '389156190'),
+('b016', '648227273');
 
-insert owner values
+INSERT owner VALUES
 ('o001', '506880757', 'b002', 'offer001'),
 ('o002', '085304579', 'b005', 'offer004'),
 ('o003', '393309045', 'b012', 'offer003'),
@@ -267,7 +272,7 @@ insert owner values
 ('o007', '059161255', 'b010', 'offer005'),
 ('o008', '574823410', 'b015', 'offer008');
 
-insert property values
+INSERT property VALUES
 ('p001', 'Sold', 835000.00,  836000.00, '2016-10-26', '2016-11-28', 'o001', 'a001'),
 ('p002', 'Sold', 1068000.00, 1065000.00, '2015-03-22', '2016-10-21', 'o002', 'a001'),
 ('p003', 'On Sale', 1011169.00, 1011169.00, '2017-02-17', null, 'o003', 'a002'),
@@ -288,7 +293,7 @@ insert property values
 ('p018', 'On Sale', 1799000, 1789000, '2017-10-07', null, 'o002', 'a003'),
 ('p019', 'On Sale', 1650000, 1555000, '2017-11-03', null, 'o001', 'a005');
 
-insert property_parameter values
+INSERT property_parameter VALUES
 ('p001', 5, 3, 2, 5662, 'CA 95136', 'San Jose'),
 ('p002', 5, 2, 2, 3484, 'CA 95125', 'San Jose'),
 ('p003', 3, 3, 2, 2761, 'CA 95120', 'San Jose'),
@@ -308,7 +313,7 @@ insert property_parameter values
 ('p017', 3, 3, 2, 1820, 'CA 94109', 'San Francisco'),
 ('p018', 2, 2, 0, 1189, 'CA 94105', 'San Francisco');
 
-insert open_house values
+INSERT open_house VALUES
 ('a002', 'oh001', '2017-03-20', '2017-05-20', 'p003'),
 ('a001', 'oh002', '2016-10-28', '2016-11-16', 'p001'),
 ('a004', 'oh003', '2016-05-25', '2016-07-26', 'p005'),
@@ -321,7 +326,7 @@ insert open_house values
 ('a003', 'oh010', '2017-10-07', '2017-11-07', 'p017'),
 ('a005', 'oh011', '2017-11-03', '2017-11-13', 'p018');
 
-insert offer values
+INSERT offer VALUES
 ('b002', 'offer001', 835000.00, 'Deal', '2016-11-27', 'p001', 'a001'),
 ('b005', 'offer004', 1068000.00, 'Deal', '2016-10-18', 'p002', 'a001'),
 ('b012', 'offer003', 830624, 'Deal', '2017-01-01', 'p004', 'a002'),
@@ -331,10 +336,10 @@ insert offer values
 ('b010', 'offer005', 1230000, 'Progress', '2017-11-10', 'p011', 'a002'),
 ('b015', 'offer008', 815990, 'Deal', '2017-08-01', 'p015', 'a005');
 
-ALTER TABLE owner ADD CONSTRAINT FK_owner_buyer_num FOREIGN KEY (buyer_num) REFERENCES offer(buyer_num);
-ALTER TABLE owner ADD CONSTRAINT FK_owner_offer_num FOREIGN KEY (offer_num) REFERENCES offer(offer_num);
+/* ALTER TABLE owner ADD CONSTRAINT FK_owner_buyer_num FOREIGN KEY (buyer_num) REFERENCES offer(buyer_num);
+ALTER TABLE owner ADD CONSTRAINT FK_owner_offer_num FOREIGN KEY (offer_num) REFERENCES offer(offer_num); */
 
-insert oh_visit values
+INSERT oh_visit VALUES
 ('b002', 'a002', 'oh001'),
 ('b010', 'a002', 'oh001'),
 ('b011', 'a001', 'oh002'),
