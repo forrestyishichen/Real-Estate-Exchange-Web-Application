@@ -12,8 +12,8 @@ init
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'any random string'
-app.config['MYSQL_DATABASE_USER'] = 'ys'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'ysys'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = '880112'
 app.config['MYSQL_DATABASE_DB'] = 'teamfive'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -92,21 +92,20 @@ def owner_property():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * from property where owner_num = '{}'" .format(session['roleid']))
+        cursor.execute("SELECT property_id, status, list_date from property where owner_num = '{}'" .format(session['roleid']))
         entries = []
         for row in cursor.fetchall():
-            entries.append([row[0], row[1]])
+            entries.append([row[0], row[1], row[2]])
         cursor.close()
         return render_template('owenr_property.html', entries=entries)
 
 '''
 Property Register
 '''
-
-@app.route('/addproperty', methods=['GET', 'POST'])
-def addproperty():
+@app.route('/add_property', methods=['GET', 'POST'])
+def add_property():
     error = None
-    if request.methods == 'POST':
+    if request.method == 'POST':
         property_id = request.form['property_id']
         asking_price = request.form['asking_price']
         room_num = request.form['room_num']
@@ -117,7 +116,7 @@ def addproperty():
         area = request.form['area']
         list_date = request.form['list_date']
 
-        if property_id == '' or owner_num == '':
+        if property_id == '':
             error = "Missing Information!"
             return render_template('owenr_property.html', error=error)
 
@@ -131,11 +130,13 @@ def addproperty():
         else:
             conn.autocommit(False)
             try:
-                print("0")
-                cursor.execute("INSERT INTO property (property_id, status, asking_price, list_date, owner_num) VALUES('{}', 'On Sale', '{}', '{}', '{}')" .format(property_id, asking_price, list_date, session['roleid']))
-                print("1")
-                cursor.execute("INSERT INTO property_parameter (property_id, room_num, bath_num, garage_num, lot_size, zip_code, area) VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')" .format(property_id, room_num, bath_num, garage_num, lot_size, zip_code, area))
-                print("2")
+                cursor.execute("INSERT INTO property (property_id, status, \
+                    asking_price, list_date, owner_num) VALUES('{}', 'On Sale', \
+                     '{}', '{}', '{}')" .format(property_id, asking_price, list_date, session['roleid']))
+                cursor.execute("INSERT INTO property_parameter (property_id, \
+                    room_num, bath_num, garage_num, lot_size, zip_code, area) \
+                    VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}')" .format(property_id, \
+                     room_num, bath_num, garage_num, lot_size, zip_code, area))
                 conn.commit()
                 cursor.close()
                 flash('You Home were registered!')

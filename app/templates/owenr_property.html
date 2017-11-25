@@ -2,7 +2,7 @@
 {% block body %}
   {% if session.logged_in %}
   <h2>Sell My Home</h2>
-  <form action="{{ url_for('addproperty') }}" method=post>
+  <form action="{{ url_for('add_property') }}" method=post>
     <dl>
       <dt>ID:
       <dd><input type=text size=30 name=property_id value="property_8888">
@@ -32,18 +32,21 @@
     <table class=table>
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Password</th>
+          <th>ID</th>
+          <th>Status</th>
+          <th>List Date</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in entries %}
           <tr>
-            <td><a href="/user/{{ entry.title }}">{{ entry.title }}</a>
+            <td><a href="/entity/{{ entry[0] }}">{{ entry[0] }}</a>
             </td>
-            <td>{{ entry.text|safe }}
+            <td>{{ entry[1] }}
             </td>
-          </tr>
+            <td>{{ entry[2] }}
+            </td>
+           </tr>
         {% else %}
           <li><em>Unbelievable.  No entries here so far</em>
         {% endfor %}
