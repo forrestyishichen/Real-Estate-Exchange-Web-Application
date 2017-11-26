@@ -52,16 +52,44 @@ Main Page 1 --- Property Search with recommendation
 def search_property():
     conn = mysql.connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT property.property_id, property.status, \
+    q = "SELECT property.property_id, property.status, \
         property.price, property_parameter.area from property inner \
         join property_parameter on property.property_id = \
-        property_parameter.property_id")
+        property_parameter.property_id"
+    cursor.execute(q)
     entries = []
     for i in range(3):
         row = cursor.fetchone()
         entries.append([row[0], row[1], row[2], row[3]])
     cursor.close()
     return render_template('search_property.html', entries=entries)
+
+'''
+Search Property
+'''
+
+@app.route('/search_property', methods=['Get'])
+def search_property():
+
+    
+
+    return render_template('search_property.html', entries=entries)
+
+
+'''
+Search Open House
+'''
+
+# @app.route('/add', methods=['POST'])
+# def add_entry():
+#     if not session.get('logged_in'):
+#         abort(401)
+#     g.db.execute('insert into entries (title, text) values (?, ?)',
+#                  [request.form['title'], request.form['text']])
+#     g.db.commit()
+#     flash('New entry was successfully posted')
+#     return redirect(url_for('show_entries'))
+
 
 '''
 Main Page 2 --- Open House Search
@@ -158,12 +186,12 @@ def owner_offer():
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("SELECT offer.property_id, offer.offer_num, offer.price, \
-            offer.offer_date, offer.agent_num \
+            offer.offer_date, offer.agent_num, offer.status \
             from offer inner join property on offer.property_id = property.property_id \
             where property.owner_num = '{}'".format(session['roleid']))
         entries = []
         for row in cursor.fetchall():
-            entries.append([row[0], row[1], row[2], row[3], row[4]])
+            entries.append([row[0], row[1], row[2], row[3], row[4], row[5]])
         cursor.close()
         return render_template('owner_offer.html', entries=entries)
 
@@ -252,6 +280,10 @@ def agent_commision():
         cursor.execute("SELECT total_commission FROM agent \
             where agent_num = '{}'" .format(session['roleid']))
         data2=cursor.fetchone()
+        if data2[0] == None:
+            data2 = list(data2)
+            data2[0] = 0.00
+            data2 = tuple(data2)
         entries =[] 
         entries.append([data1[0],data2[0]])
         cursor.close()
@@ -349,22 +381,6 @@ def buyer_openhouse():
             entries.append([row[0], row[1], row[2]]) 
         cursor.close()
         return render_template('buyer_openhouse.html', entries=entries)
-
-
-'''
-Search funtion
-TO DO **** transaction, add 
-'''
-
-# @app.route('/add', methods=['POST'])
-# def add_entry():
-#     if not session.get('logged_in'):
-#         abort(401)
-#     g.db.execute('insert into entries (title, text) values (?, ?)',
-#                  [request.form['title'], request.form['text']])
-#     g.db.commit()
-#     flash('New entry was successfully posted')
-#     return redirect(url_for('show_entries'))
 
 '''
 User Login
@@ -503,6 +519,56 @@ def show_property_profile(property_id):
         entries.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]])
     cursor.close()
     return render_template('property_detail.html', entries=entries)
+
+'''
+Accept Offer
+'''
+@app.route('/accept_offer/<offer_num>', methods=['GET', 'POST'])
+def accept_offer(offer_num):
+    error = None
+    if request.method == 'POST':
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT property.status, offer.status FROM property inner join offer on \
+            property.property_id = offer.property_id WHERE offer.offer_num='{}'" .format(offer_num))
+        data = cursor.fetchone()
+        if data[0] == 'Sold':
+            cursor.close()
+            flash('House Already Sold!!')
+        elif data[0] == 'Deal':
+            cursor.close()
+            flash('Offer Already Accepted!!')
+        else:
+            cursor.execute("SELECT property_id, price, agent_num FROM offer \
+                WHERE offer_num='{}'" .format(offer_num))
+            data = cursor.fetchone()
+            newid = data[0]
+            newprice = data[1]
+            newagent = data[2]
+
+            cursor.execute("SELECT total_commission FROM agent \
+                WHERE agent_num='{}'" .format(newagent))
+            data = cursor.fetchone()
+            newtotal = data[0]
+            newtotal = float(newtotal) + (float(newprice)*0.03)
+
+            conn.autocommit(False)
+            try:
+                cursor.execute("UPDATE property SET status = 'Sold', price = '{}' \
+                    WHERE property_id ='{}'" .format(newprice,newid))
+                cursor.execute("UPDATE offer SET status = 'Deal' \
+                    WHERE offer_num ='{}'" .format(offer_num))
+                cursor.execute("UPDATE agent SET total_commission = {}, commission_rate = 0.03\
+                    WHERE agent_num ='{}'" .format(newtotal,newagent))
+                conn.commit()
+                cursor.close()
+                flash('Congratulations, %s!' % escape(username))
+                return redirect(url_for('owner_offer'))
+            except:
+                flash('House Already Sold!!')
+                conn.rollback()
+    return redirect(url_for('owner_offer'))
+
 
 '''
 404

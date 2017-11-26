@@ -14,15 +14,11 @@
           <th>Lot Size</th>
           <th>Zip</th>
           <th>Area</th>
+          <th>Take Action</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in entries %}
-          {% if session.rolename == "buyer" %}
-          <form action="/buyeroffer/{{ entry[0] }}" method="post">
-            <input type="submit" value="I want to buy">
-          </form>
-          {% endif %}
           <tr>
             <td>{{ entry[0] }}</td>
             <td>{{ entry[1] }}</td>
@@ -33,6 +29,12 @@
             <td>{{ entry[6] }}</td>
             <td>{{ entry[7] }}</td>
             <td>{{ entry[8] }}</td>
+            <td>
+            {% if session.rolename == "buyer" %}
+            <form action="/buyeroffer/{{ entry[0] }}" method="post">
+            <input type="submit" value="I want to buy">
+            </form>
+            {% endif %}</td>
           </tr>
         {% else %}
           <li><em>Unbelievable.  No entries here so far</em>

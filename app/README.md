@@ -38,7 +38,9 @@ Buyer: Offer page(b1)\
 Buyer: Open House page(link to offer)(b2)、
 Agent: Open House register form(a1)\
 Agent: Open House Page(a1)\
-Agent: Commision Page(a2)
+Agent: Commision Page(a2)\
+Owner: Offer page(accept offer here)(o2)\
+**Transaction function for accept offer** (need test)
 
 
 **TO DO**
@@ -46,9 +48,7 @@ Agent: Commision Page(a2)
 Serach Page(main page 1)\
 Open House serach(link to visit for buyer)(main page 2)\
 **Search Function()**\
-Market Report(main page 3)\
-Owner: Offer page(accept offer here)(o2)\
-**Transaction function for accept offer**
+Market Report(main page 3)
 
 ## Extra
 

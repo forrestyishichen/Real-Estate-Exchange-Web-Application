@@ -3,7 +3,7 @@
   {% if session.logged_in %}
   {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
   <h2>Find a Home</h2>
-  <form action="#" method=post class=add-entry>
+  <form action="search_property" method=post class=add-entry>
     <dl>
       <dt>Price:
       <dd>
@@ -12,12 +12,6 @@
         <input type=text size=30 name=highprice>
       <dt>Area:
       <dd><input type=text size=30 name=area>
-      <dt>Room:
-      <dd><input type=text size=30 name=room_num>
-      <dt>Bath Room:
-      <dd><input type=text size=30 name=bath_num>
-      <dt>Garage:
-      <dd><input type=text size=30 name=garage_num>
       <dd>Other:
       <dd><textarea name=text rows=5 cols=40></textarea>
       <dd><input type=submit value=search>
