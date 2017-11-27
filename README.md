@@ -27,7 +27,27 @@ This is a somehow annoying problem of python versions.
 
 YS: In my experience, many popular libraries (such as TensorFlow and gRPC) use `virtualenv`.
 
-## Run
+## Run locally
 
+Assume at local machine you already have a recent python 3 version (3.5 or 3.6) and pip.
+
+```bash
+# or simpler: pyvenv ~/flask
+python3 -m venv ~/flask
+
+# activate the environment 
+source ~/flask/bin/activate
+
+# install flask and other packages
+pip install flask
+pip install flask-mysql
+pip install werkzeug
+
+# clone this repository to your local
+git clone https://github.com/forrestyishichen/CMPE226.git
+cd CMPE226/app
 python server.py
 
+# after running, for deactivation of environment
+deactivate
+```
