@@ -44,10 +44,26 @@ pip install flask-mysql
 pip install werkzeug
 
 # clone this repository to your local
-git clone https://github.com/forrestyishichen/CMPE226.git
+git clone git@github.com:forrestyishichen/CMPE226.git
 cd CMPE226/app
 python server.py
 
 # after running, for deactivation of environment
 deactivate
 ```
+
+## Setting up database
+
+Go to `server.py`, and change the following to your own local database user.
+
+```
+app.config['MYSQL_DATABASE_USER'] = 'user'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'pass'
+```
+
+To import DDL, go to the ddl
+
+```
+mysql < team5_final.sql -u yourusername -p
+```
+
