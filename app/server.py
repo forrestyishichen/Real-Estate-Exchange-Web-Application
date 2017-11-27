@@ -180,8 +180,9 @@ def o_search():
         else:
             myquery = "SELECT open_house.oh_num, open_house.property_id, \
                        open_house.start_date, open_house.end_date, property.asking_price \
-                      FROM open_house, property \
-                      WHERE open_house.property_id = property.property_id"
+                      FROM open_house, property, property_parameter\
+                      WHERE open_house.property_id = property.property_id \
+                      AND property.property_id = property_parameter.property_id"
 
             if lowprice == '':
                 lowprice = 0
@@ -189,11 +190,11 @@ def o_search():
             if highprice == '':
                 highprice = 999999999
 
-            priceq = " AND price >= {} AND price <= {}".format(lowprice, highprice)
+            priceq = " AND property.price >= {} AND property.price <= {}".format(lowprice, highprice)
             myquery = myquery + priceq
 
             if area != '':
-                addsq = " AND area = '{}'".format(area)
+                addsq = " AND property_parameter.area = '{}'".format(area)
                 myquery = myquery + addsq
 
             if room_num != '':
