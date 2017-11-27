@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <h2>Market Report</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Total Sold Properties</th>
+          <th>Total Onsale Properties</th>
+          <th>Total Openhouses</th>
+          <th>Lowest Onsale Price</th>
+          <th>Highest Onsale Price</th>
+          <th>Average Onsale Price</th>
+          <th>Lowest Sold Price</th>
+          <th>Highest Sold Price</th>
+          <th>Average Sold Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+            <td>{{ entry[4] }}
+            </td>
+            <td>{{ entry[5] }}
+            </td>
+            <td>{{ entry[6] }}
+            </td>
+            <td>{{ entry[7] }}
+            </td>
+            <td>{{ entry[8] }}
+            </td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

@@ -22,7 +22,7 @@
     <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
     <a href="{{ url_for('owner_property') }}">Sell My Home</a>
     <a href="{{ url_for('owner_offer') }}">My Offer</a>
-    <a href="#">Market Report</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
   </div>
   {% endif %}
   {% if session.rolename == "agent" %}
@@ -31,7 +31,7 @@
     <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
     <a href="{{ url_for('agent_openhouse') }}">My Open House</a>
     <a href="{{ url_for('agent_commision') }}">My Commision</a>
-    <a href="#">Market Report</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
   </div>
   {% endif %}
   {% if session.rolename == "buyer" %}
@@ -40,7 +40,7 @@
     <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
     <a href="{{ url_for('buyer_offer') }}">My offer</a>
     <a href="{{ url_for('buyer_openhouse') }}">My Open house</a>
-    <a href="#">Market Report</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
   </div>
   {% endif %}
   {% endif %}
