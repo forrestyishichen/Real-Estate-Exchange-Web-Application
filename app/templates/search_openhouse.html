@@ -1,12 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
   <h2>Find a Open House</h2>
-  <form action="#" method=post class=add-entry>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <form action="{{ url_for('o_search') }}" method=post class=add-entry>
     <dl>
-      <dt>Date:
-      <dd><input type=text size=30 name=date>
       <dt>Price:
       <dd>
         <input type=text size=30 name=lowprice>
@@ -20,10 +18,48 @@
       <dd><input type=text size=30 name=bath_num>
       <dt>Garage:
       <dd><input type=text size=30 name=garage_num>
-      <dd>Other:
-      <dd><textarea name=text rows=5 cols=40></textarea>
+      <dd>
       <dd><input type=submit value=search>
     </dl>
   </form>
+  <br>
+  <h2>Open House List</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Open House ID</th>
+          <th>Property ID</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+            <td>{{ entry[4] }}
+            </td>
+            <td>{% if session.rolename == "buyer" %}
+            <form action="/ohvisit/{{ entry[0] }}" method="post">
+            <input type="submit" value="I want to visit">
+            </form>
+            {% endif %}</td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
 {% endif %}
 {% endblock %}

@@ -2,6 +2,7 @@
 {% block body %}
 {% if session.logged_in %}
   <h2>My Open House</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
   <br>
   <ul class=entries>
     <table class=table>

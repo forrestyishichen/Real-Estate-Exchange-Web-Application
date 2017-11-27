@@ -37,14 +37,6 @@ def index():
     # return current_app.send_static_file('index.html')
 
 '''
-Static page
-'''
-
-@app.route('/<string:page_name>/')
-def static_page(page_name):
-    return current_app.send_static_file('%s.html' % page_name)
-
-'''
 Main Page 1 --- Property Search with recommendation
 '''
 
@@ -68,27 +60,84 @@ def search_property():
 Search Property
 '''
 
-@app.route('/search_property', methods=['Get'])
-def search_property():
+@app.route('/p_search', methods=['Get', 'POST'])
+def p_search():
+    error = None
+    if request.method == 'POST':
+        lowprice = request.form['lowprice']
+        highprice = request.form['highprice']
+        area = request.form['area']
+        room_num = request.form['room_num']
+        bath_num = request.form['bath_num']
+        garage_num = request.form['garage_num']
 
-    
+        entries = []
 
-    return render_template('search_property.html', entries=entries)
+        if not is_number(lowprice) and lowprice != '':
+            error = "Please provide a valid price!"
+        elif not is_number(highprice) and highprice != '':
+            error = "Please provide a valid price!"
+        elif not is_number(room_num) and room_num != '':
+            error = "Please provide a valid room_num number!"
+        elif not is_number(bath_num) and bath_num != '':
+            error = "Please provide a valid bath_num number!"
+        elif not is_number(garage_num) and garage_num != '':
+            error = "Please provide a valid garage_num number!"
+        else:
+            myquery = "SELECT property.property_id, property.status, property.asking_price, property_parameter.area \
+                      FROM property, property_parameter \
+                      WHERE property.property_id = property_parameter.property_id"
 
+            if lowprice == '':
+                lowprice = 0
 
-'''
-Search Open House
-'''
+            if highprice == '':
+                highprice = 999999999
 
-# @app.route('/add', methods=['POST'])
-# def add_entry():
-#     if not session.get('logged_in'):
-#         abort(401)
-#     g.db.execute('insert into entries (title, text) values (?, ?)',
-#                  [request.form['title'], request.form['text']])
-#     g.db.commit()
-#     flash('New entry was successfully posted')
-#     return redirect(url_for('show_entries'))
+            priceq = " AND price >= {} AND price <= {}".format(lowprice, highprice)
+            myquery = myquery + priceq  
+
+            if area != '':
+                addsq = " AND area = '{}'".format(area)
+                myquery = myquery + addsq
+
+            if room_num != '':
+                addsq = " AND property_parameter.room_num = {}".format(room_num)
+                myquery = myquery + addsq
+
+            if bath_num != '':
+                addsq = " AND property_parameter.bath_num = {}".format(bath_num)
+                myquery = myquery + addsq
+
+            if garage_num != '':
+                addsq = " AND property_parameter.garage_num = {}".format(garage_num)
+                myquery = myquery + addsq
+
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(myquery)
+
+            for row in cursor.fetchall():
+                entries.append([row[0], row[1], row[2], row[3]])
+                cursor.close()
+
+        return render_template('search_property.html', entries=entries, error=error)
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+ 
+    try:
+        import unicodedata
+        unicodedata.numeric(s)
+        return True
+    except (TypeError, ValueError):
+        pass
+ 
+    return False
 
 
 '''
@@ -97,8 +146,102 @@ Main Page 2 --- Open House Search
 
 @app.route('/searchopenhouse', methods=['GET', 'POST'])
 def search_openhouse():
-    return render_template('search_openhouse.html')
-    # return render_template('search_openhouse.html', entries=entries)
+    error = None
+    entries =[]
+    return render_template('search_openhouse.html', entries=entries, error=error)
+
+'''
+Search Open House
+'''
+
+@app.route('/o_search', methods=['GET', 'POST'])
+def o_search():
+    error = None
+    if request.method == 'POST':
+        lowprice = request.form['lowprice']
+        highprice = request.form['highprice']
+        area = request.form['area']
+        room_num = request.form['room_num']
+        bath_num = request.form['bath_num']
+        garage_num = request.form['garage_num']
+
+        entries = []
+
+        if not is_number(lowprice) and lowprice != '':
+            error = "Please provide a valid price!"
+        elif not is_number(highprice) and highprice != '':
+            error = "Please provide a valid price!"
+        elif not is_number(room_num) and room_num != '':
+            error = "Please provide a valid room_num number!"
+        elif not is_number(bath_num) and bath_num != '':
+            error = "Please provide a valid bath_num number!"
+        elif not is_number(garage_num) and garage_num != '':
+            error = "Please provide a valid garage_num number!"
+        else:
+            myquery = "SELECT open_house.oh_num, open_house.property_id, \
+                       open_house.start_date, open_house.end_date, property.asking_price \
+                      FROM open_house, property \
+                      WHERE open_house.property_id = property.property_id"
+
+            if lowprice == '':
+                lowprice = 0
+
+            if highprice == '':
+                highprice = 999999999
+
+            priceq = " AND price >= {} AND price <= {}".format(lowprice, highprice)
+            myquery = myquery + priceq
+
+            if area != '':
+                addsq = " AND area = '{}'".format(area)
+                myquery = myquery + addsq
+
+            if room_num != '':
+                addsq = " AND property_parameter.room_num = {}".format(room_num)
+                myquery = myquery + addsq
+
+            if bath_num != '':
+                addsq = " AND property_parameter.bath_num = {}".format(bath_num)
+                myquery = myquery + addsq
+
+            if garage_num != '':
+                addsq = " AND property_parameter.garage_num = {}".format(garage_num)
+                myquery = myquery + addsq
+
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(myquery)
+
+            for row in cursor.fetchall():
+                entries.append([row[0], row[1], row[2], row[3], row[4]])
+                cursor.close()
+
+    return render_template('search_openhouse.html', entries=entries, error=error)
+
+'''
+Open House Visit
+'''
+@app.route('/ohvisit/<oh_num>', methods=['GET', 'POST'])
+def ohvisit(oh_num):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT agent_num FROM open_house \
+        WHERE oh_num='{}'" .format(oh_num))
+    data = cursor.fetchone()
+    myagent = data[0]
+
+    conn.autocommit(False)
+    try:
+        cursor.execute("INSERT INTO oh_visit (buyer_num, agent_num, \
+            oh_num) VALUES('{}', '{}', '{}' \
+            )" .format(session['roleid'], myagent, oh_num))
+        conn.commit()
+        cursor.close()
+        flash('Thank you for visiting!')
+    except:
+        flash('There are some errors!')
+        conn.rollback()    
+    return redirect(url_for('buyer_openhouse'))
 
 '''
 Main Page 3 --- Market Report
@@ -111,6 +254,7 @@ Main Page 3 --- Market Report
 '''
 Owner Page1 --- Add property and list property
 '''
+
 @app.route('/ownerproperty' , methods=['GET', 'POST'])
 def owner_property():
     error = None
@@ -130,6 +274,7 @@ def owner_property():
 '''
 Property Register
 '''
+
 @app.route('/add_property', methods=['GET', 'POST'])
 def add_property():
     error = None
@@ -176,6 +321,7 @@ def add_property():
 '''
 Owner Page2 --- Offer managerment
 '''
+
 @app.route('/owneroffer', methods=['GET', 'POST'])
 def owner_offer():
     error = None
@@ -199,6 +345,7 @@ def owner_offer():
 '''
 Agent Page1 --- Add Openhouse and list Openhouse
 '''
+
 @app.route('/agentopenhouse' , methods=['GET', 'POST'])
 def agent_openhouse():
     error = None
@@ -219,6 +366,7 @@ def agent_openhouse():
 '''
 Open House Register
 '''
+
 @app.route('/add_openhouse', methods=['GET', 'POST'])
 def add_openhouse():
     error = None
@@ -264,6 +412,7 @@ def add_openhouse():
 '''
 Agent Page2 --- Commision managerment
 '''
+
 @app.route('/agent_commision', methods=['GET', 'POST'])
 def agent_commision():
     error = None
@@ -292,6 +441,7 @@ def agent_commision():
 '''
 Buyer Page1 --- Add offer and list offer
 '''
+
 @app.route('/buyeroffer', methods=['GET', 'POST'])
 @app.route('/buyeroffer/<prperty_id>', methods=['GET', 'POST'])
 def buyer_offer(prperty_id=''):
@@ -310,10 +460,10 @@ def buyer_offer(prperty_id=''):
         cursor.close()
         return render_template('buyer_offer.html', entries=entries, id=prperty_id)
 
-
 '''
 Offer Register
 '''
+
 @app.route('/add_offer', methods=['GET', 'POST'])
 def add_offer():
     error = None
@@ -362,6 +512,7 @@ def add_offer():
 '''
 Buyer Page2 --- Open House managerment
 '''
+
 @app.route('/buyeropenhouse', methods=['GET', 'POST'])
 def buyer_openhouse():
     error = None
@@ -496,8 +647,6 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('login'))
 
-
-
 '''
 Detail page
 TO DO **** list detail and action
@@ -523,6 +672,7 @@ def show_property_profile(property_id):
 '''
 Accept Offer
 '''
+
 @app.route('/accept_offer/<offer_num>', methods=['GET', 'POST'])
 def accept_offer(offer_num):
     error = None
@@ -563,12 +713,10 @@ def accept_offer(offer_num):
                 conn.commit()
                 cursor.close()
                 flash('Congratulations, %s!' % escape(username))
-                return redirect(url_for('owner_offer'))
             except:
                 flash('House Already Sold!!')
                 conn.rollback()
     return redirect(url_for('owner_offer'))
-
 
 '''
 404
@@ -586,5 +734,3 @@ if __name__ == '__main__':
     app.debug = True
     app.run()
     # app.run(host='0.0.0.0',port=5000)
-
-

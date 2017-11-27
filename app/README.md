@@ -40,14 +40,15 @@ Agent: Open House register form(a1)\
 Agent: Open House Page(a1)\
 Agent: Commision Page(a2)\
 Owner: Offer page(accept offer here)(o2)\
-**Transaction function for accept offer** (need test)
+**Transaction function for accept offer** (need test)\
+Serach Page(main page 1)\
+**Search Function()**\
+Open House serach(link to visit for buyer)(main page 2)
 
 
 **TO DO**
 
-Serach Page(main page 1)\
 Open House serach(link to visit for buyer)(main page 2)\
-**Search Function()**\
 Market Report(main page 3)
 
 ## Extra
