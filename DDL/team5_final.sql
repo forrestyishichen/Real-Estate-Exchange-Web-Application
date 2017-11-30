@@ -95,7 +95,6 @@ CREATE TABLE property_parameter (
         ON DELETE CASCADE
 );
 
-
 CREATE TABLE open_house (
   agent_num    VARCHAR(15) NOT NULL,
   oh_num       VARCHAR(15) NOT NULL,
@@ -375,10 +374,27 @@ INSERT oh_visit VALUES
 ('buyer_13', 'agent_2', 'oh_5'),
 ('buyer_12', 'agent_2', 'oh_6'),
 ('buyer_9', 'agent_3', 'oh_7'),
-('buyer_17', 'agent_3', 'oh_7'),
+('buyer_15', 'agent_3', 'oh_7'),
 ('buyer_2', 'agent_1', 'oh_8'),
 ('buyer_1', 'agent_1', 'oh_9'),
 ('buyer_14', 'agent_3', 'oh_10'),
 ('buyer_16', 'agent_5', 'oh_11');
+
+/* Add View for market report */
+
+CREATE VIEW report_sold(area,totl_num, average_soldprice)
+AS SELECT area, count(*), avg(price)
+   FROM property, property_parameter
+   WHERE property.property_id = property_parameter.property_id
+   AND status = 'Sold'
+   GROUP BY area;
+
+
+CREATE VIEW report_onsale(area,totl_num, average_saleprice)
+AS SELECT area, count(*), avg(price)
+   FROM property, property_parameter
+   WHERE property.property_id = property_parameter.property_id
+   AND status = 'On Sale'
+   GROUP BY area;
 
 SET foreign_key_checks = 1;

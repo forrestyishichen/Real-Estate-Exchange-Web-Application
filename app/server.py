@@ -349,42 +349,20 @@ Main Page 3 --- Market Report
 
 @app.route('/market_report', methods=['GET'])
 def market_report():
-    q = []
-    # total sold properties
-    q.append("SELECT Count(*) FROM property WHERE status = 'Sold'")
-    # total onsale properties
-    q.append("SELECT Count(*) FROM property WHERE status = 'On Sale'")
-    # total openhouses
-    q.append("SELECT Count(*) FROM open_house")
-    # lowest onsale price
-    q.append("SELECT asking_price FROM property WHERE status = 'On Sale' ORDER BY price LIMIT 1")
-    # highest onsale price
-    q.append("SELECT asking_price FROM property WHERE status = 'On Sale' ORDER BY price DESC LIMIT 1")
-    # average onsale price
-    q.append("SELECT Avg(asking_price) FROM property WHERE status = 'On Sale'")
-    # lowest sold price
-    q.append("SELECT price FROM property WHERE status = 'Sold' ORDER BY price LIMIT 1")
-    # highest sold price
-    q.append("SELECT price FROM property WHERE status = 'Sold' ORDER BY price DESC LIMIT 1")
-    # average sold price
-    q.append("SELECT Avg(price) FROM property WHERE status = 'Sold'")
-
     conn = mysql.connect()
     cursor = conn.cursor()
-    res = []
-    for sq in q:
-        cursor.execute(sq)
-        r = cursor.fetchone()
-        if r[0] is None:
-            r[0] = "NULL"
-        if is_number(r[0]):
-            res.append(int(r[0]))
-        else:
-            res.append(r[0])
-
     entries = []
-    entries.append(res)
-    return render_template('market_report.html', entries=entries)
+    cursor.execute("SELECT * FROM report_sold")
+    for row in cursor.fetchall():
+        entries.append([row[0], row[1], int(row[2])])
+    
+    tasks = []
+    cursor.execute("SELECT * FROM report_onsale")
+    for row in cursor.fetchall():
+        tasks.append([row[0], row[1], int(row[2])])
+
+    cursor.close()
+    return render_template('market_report.html', entries=entries, tasks=tasks)
 
 '''
 Owner Page1 --- Add property and list property

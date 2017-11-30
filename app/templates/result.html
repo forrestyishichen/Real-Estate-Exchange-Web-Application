@@ -1,7 +1,0 @@
-{% extends "layout.html" %}
-{% block body %}
-{% if session.logged_in %}
-  <h2>My Offer</h2>
-  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-{% endif %}
-{% endblock %}

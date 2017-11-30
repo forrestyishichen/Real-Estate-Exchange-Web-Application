@@ -2,20 +2,14 @@
 {% block body %}
   {% if session.logged_in %}
   {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
-  <h2>Market Report</h2>
+  <h2>Market Sold Report</h2>
   <br>
   <ul class=entries>
     <table class=table>
       <thead>
         <tr>
+          <th>Area</th>
           <th>Total Sold Properties</th>
-          <th>Total Onsale Properties</th>
-          <th>Total Openhouses</th>
-          <th>Lowest Onsale Price</th>
-          <th>Highest Onsale Price</th>
-          <th>Average Onsale Price</th>
-          <th>Lowest Sold Price</th>
-          <th>Highest Sold Price</th>
           <th>Average Sold Price</th>
         </tr>
       </thead>
@@ -28,17 +22,32 @@
             </td>
             <td>{{ entry[2] }}
             </td>
-            <td>{{ entry[3] }}
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+  <br>
+  <h2>Market On Sale Report</h2> 
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Total On Sale Properties</th>
+          <th>Average On Sale Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+          <tr>
+            <td>{{ task[0] }}
             </td>
-            <td>{{ entry[4] }}
+            <td>{{ task[1] }}
             </td>
-            <td>{{ entry[5] }}
-            </td>
-            <td>{{ entry[6] }}
-            </td>
-            <td>{{ entry[7] }}
-            </td>
-            <td>{{ entry[8] }}
+            <td>{{ task[2] }}
             </td>
           </tr>
         {% else %}
