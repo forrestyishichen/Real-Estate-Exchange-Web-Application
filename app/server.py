@@ -720,30 +720,46 @@ def register():
             error = "Missing Information!"
             return render_template('register.html', error=error)
 
-        '''
-        Duplicate check
-        '''
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
-        data = cursor.fetchone()
-        if data is not None:
-            error = 'Duplicate username and password'
+
+        conn.autocommit(False)
+        try:
+            # ssn, user_name, password, bdate, address, email, fname, minit, lname
+            cursor.execute("CALL Register(@A, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')".format(
+                ssn, user_name, password, bdate, address, email, fname, minit, lname))
+            cursor.execute("SELECT @A")
+            returnvalue = cursor.fetchone()[0] # failed or succeed
+            conn.commit()
             cursor.close()
-        else:
-            '''
-            Transaction
-            '''
-            conn.autocommit(False)
-            try:
-                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
-                cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
-                conn.commit()
-                cursor.close()
-                flash('You were registered, %s' % escape(username))
-                return render_template('login.html', error=error)
-            except:
-                conn.rollback()    
+            flash('Register of {s} {s}'.format(username, returnvalue))
+            return render_template('login.html', error=error)
+        except:
+            conn.rollback()
+        conn.autocommit(True)
+
+        # '''
+        # Duplicate check
+        # '''
+        # cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
+        # data = cursor.fetchone()
+        # if data is not None:
+        #     error = 'Duplicate username and password'
+        #     cursor.close()
+        # else:
+        #     '''
+        #     Transaction
+        #     '''
+        #     conn.autocommit(False)
+        #     try:
+        #         cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
+        #         cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+        #         conn.commit()
+        #         cursor.close()
+        #         flash('You were registered, %s' % escape(username))
+        #         return render_template('login.html', error=error)
+        #     except:
+        #         conn.rollback()    
     return render_template('register.html', error=error)
 
 '''
