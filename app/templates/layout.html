@@ -1,8 +1,8 @@
 <!doctype html>
-<title>Forrest'Site</title>
+<title>CMPE 226 Team 5</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <div class=page>
-  <h1>Forrest's Site</h1>
+  <h1>CMPE 226 Team 5</h1>
   <div class=metanav>
   {% if not session.logged_in %}
     <a href="{{ url_for('register') }}">Register</a>
@@ -41,6 +41,13 @@
     <a href="{{ url_for('buyer_offer') }}">My offer</a>
     <a href="{{ url_for('buyer_openhouse') }}">My Open house</a>
     <a href="{{ url_for('market_report') }}">Market Report</a>
+  </div>
+  {% endif %}
+  {% if session.rolename == "Admin" %}
+  <div class=metanav>
+    <a href="{{ url_for('admin_property') }}">Property Management</a>
+    <a href="{{ url_for('admin_offer') }}">Offer Management</a>
+    <a href="{{ url_for('admin_import') }}">Import</a>
   </div>
   {% endif %}
   {% endif %}

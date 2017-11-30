@@ -34,7 +34,106 @@ Index Page
 @app.route('/')
 def index():
     return render_template('login.html')
-    # return current_app.send_static_file('index.html')
+
+'''
+Admin Site
+'''
+
+@app.route('/admintool', methods=['GET', 'POST'] )
+def admintool():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = 'pbkdf2:sha256:50000$lzwb3XNh$83373507a3c50c77af4b2cd1c875d479bcef9619c81bfb5aa2be8e7e9cd055f9'
+
+        if not username == 'CMPE226':
+            error = "Wrong Name and Password!"
+        elif check_password_hash(hashed_password, password):
+            session['logged_in'] = True
+            session['username'] = 'Admin'
+            session['rolename'] = 'Admin'
+            return render_template('admintool.html')
+    return render_template('admin_login.html', error=error)
+
+'''
+Admin Property
+'''
+@app.route('/admin_property', methods=['GET', 'POST'] )
+def admin_property():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT property_id, status FROM property")
+    entries = []
+    for row in cursor.fetchall():
+        entries.append([row[0] ,row[1]])
+        cursor.close()
+    return render_template('admin_tool.html', entries=entries)
+
+
+'''
+Admin Offer
+'''
+
+@app.route('/admin_offer', methods=['GET', 'POST'] )
+def admin_offer():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT offer_num, status FROM offer")
+    entries = []
+    for row in cursor.fetchall():
+        entries.append([row[0] ,row[1]])
+        cursor.close()
+    return render_template('admin_tool.html', entries=entries)
+
+'''
+Admin Updates
+'''
+@app.route('/admin_update/<id>', methods=['GET', 'POST'])
+def admin_update(id):
+    if request.method == 'POST':
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        update = request.form['status']
+        if id[0]  == 'p':
+            cursor.execute("UPDATE property SET status = '{}' \
+                WHERE property_id ='{}'" .format(update,id))
+            conn.commit()
+            cursor.close()
+            flash('Updated!')
+        elif id[0]  == 'o':
+            cursor.execute("UPDATE offer SET status = '{}' \
+                WHERE offer_num ='{}'" .format(update, id))
+            conn.commit()
+            cursor.close()
+            flash('Updated!')
+    return render_template('admin_tool.html')
+
+'''
+Admin Import
+'''
+@app.route('/admin_import', methods=['GET', 'POST'] )
+def admin_import():
+    if request.method == 'POST':
+        path = request.form['path']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        conn.autocommit(False)
+        try:
+            cursor.execute("Source {}" .format(path))
+            conn.commit()
+            cursor.close()
+            flash('You have import some data!')
+        except:
+            error = 'There are some errors!'
+            conn.rollback()    
+    return render_template('admin_import.html')
+
+
+'''
+Admin Output
+'''
+
 
 '''
 Main Page 1 --- Property Search with recommendation
