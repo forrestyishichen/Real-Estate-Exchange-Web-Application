@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <h2>Welcome to Admintool!</h2>
+  <br>
+  <h2>List of Entities</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Updates</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td><form action="/admin_update/{{ entry[0] }}" method="post">
+            <input type=text size=20 name=status value="Put your updates here!">
+            <input type="submit" value="Submit">
+            </form></td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if session.logged_in %}
+  <h2>My Offer</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Property ID</th>
+          <th>Offer Number</th>
+          <th>Price</th>
+          <th>Offer Date</th>
+          <th>Agent Number</th>
+          <th>Status</th>
+          <th>Take Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+            <td>{{ entry[4] }}
+            </td>
+            <td>{{ entry[5] }}
+            </td>
+            <td><form action="/accept_offer/{{ entry[1] }}" method="post">
+            <input type="submit" value="Accept">
+            </form></td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

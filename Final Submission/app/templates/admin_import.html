@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <h2>Import from file!</h2>
+  <br>
+  <h2>Please be very careful about your move here!</h2>
+  <br>
+  <form action="{{ url_for('admin_import') }}" method=post class=add-entry>
+    <dl>
+      <dt>Path:
+      <dd><input type=text size=50 name=pate>
+      <dd><input type=submit value=submit>
+    </dl>
+  </form>
+{% endif %}
+{% endblock %}
