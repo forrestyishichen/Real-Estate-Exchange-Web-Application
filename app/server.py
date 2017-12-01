@@ -670,18 +670,18 @@ def login():
             session['logged_in'] = True
             session['username'] = username
             session['rolename'] = role
-            session['ssn'] = data[1]
+            session['ssn'] = data[1] 
             '''
             Register to role table
             '''
-            cursor.execute("SELECT {} FROM {} WHERE ssn = '{}'" .format((role+'_num'), role, session['ssn']))
+            cursor.execute("CALL role_check('{}','{}')" .format(role,session['ssn']))
             data = cursor.fetchone()
             if data is None:
                 cursor.execute("SELECT count(*) FROM {}" .format(role))
                 num = cursor.fetchone()
-                cursor.execute("INSERT INTO {} ({}, ssn) VALUES('{}', '{}')" .format(role,(role+'_num'),(role+'_'+str(num[0]+1)), session['ssn']))
-                conn.commit()
                 session['roleid'] = (role+'_'+str(num[0]+1))
+                cursor.execute("CALL role_insert('{}','{}','{}')" .format(role,session['roleid'],session['ssn']))
+                conn.commit()
                 flash('Register as %s' % escape(session['rolename']))
             else:
                 session['roleid'] = data[0]
