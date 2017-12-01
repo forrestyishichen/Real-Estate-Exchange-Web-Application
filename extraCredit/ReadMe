@@ -1,0 +1,9 @@
+// create database
+> use CMPE226PROJECT     
+
+//insert document
+> db.Image.insert( { images : [ "images/masterRoom.jpg" , "images/bedroom1.jpg" , "images/bedroom2.jpg" , "images/bedroom3.jpg" , "images/familyRoom.jpg" , "images/house.jpg" , "images/livingRoom.jpg"] , property_id : "1"}  )   
+
+//show document 
+> db.Image.find()
+{ "_id" : ObjectId("5a21d0be65a0339e59653849"), "images" : [ "images/masterRoom.jpg", "images/bedroom1.jpg", "images/bedroom2.jpg", "images/bedroom3.jpg", "images/familyRoom.jpg", "images/house.jpg", "images/livingRoom.jpg" ], "property_id" : "1" }
