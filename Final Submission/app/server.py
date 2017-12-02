@@ -91,23 +91,33 @@ Admin Updates
 '''
 @app.route('/admin_update/<id>', methods=['GET', 'POST'])
 def admin_update(id):
+    error = []
     if request.method == 'POST':
         conn = mysql.connect()
         cursor = conn.cursor()
         update = request.form['status']
+        conn.autocommit(False)
         if id[0]  == 'p':
-            cursor.execute("UPDATE property SET status = '{}' \
-                WHERE property_id ='{}'" .format(update,id))
-            conn.commit()
-            cursor.close()
-            flash('Updated!')
+            try:
+                cursor.execute("UPDATE property SET status = '{}' \
+                    WHERE property_id ='{}'" .format(update,id))
+                conn.commit()
+                cursor.close()
+                flash('Updated!')
+            except:
+                error = 'There are some errors!'
+                conn.rollback()
         elif id[0]  == 'o':
-            cursor.execute("UPDATE offer SET status = '{}' \
-                WHERE offer_num ='{}'" .format(update, id))
-            conn.commit()
-            cursor.close()
-            flash('Updated!')
-    return render_template('admin_tool.html')
+            try:
+                cursor.execute("UPDATE offer SET status = '{}' \
+                    WHERE offer_num ='{}'" .format(update, id))
+                conn.commit()
+                cursor.close()
+                flash('Updated!')
+            except:
+                error = 'There are some errors!'
+                conn.rollback() 
+    return render_template('admin_tool.html', error=error)
 
 '''
 Admin Import
@@ -428,7 +438,7 @@ def add_property():
                 flash('You Home were registered!')
             except:
                 error = 'There are some errors!'
-                conn.rollback()    
+                conn.rollback()
     return render_template('owenr_property.html', error=error)
 
 '''
@@ -736,8 +746,11 @@ def register():
             '''
             conn.autocommit(False)
             try:
-                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
-                cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, \
+                    address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn \
+                        , username, hashed_password, bdate, address, email))
+                cursor.execute("INSERT INTO name (user_name, fname, minit, lname \
+                    ) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
                 conn.commit()
                 cursor.close()
                 flash('You were registered, %s' % escape(username))
@@ -810,11 +823,12 @@ def accept_offer(offer_num):
             newprice = data[1]
             newagent = data[2]
             if newagent is not None:
-                cursor.execute("SELECT total_commission FROM agent \
+                cursor.execute("SELECT total_commission, commission_rate FROM agent \
                     WHERE agent_num='{}'" .format(newagent))
                 data = cursor.fetchone()
                 newtotal = data[0]
-                newtotal = float(newtotal) + (float(newprice)*0.03)
+                newrate = data[1]
+                newtotal = float(newtotal) + (float(newprice)*float(newrate))
 
             conn.autocommit(False)
             try:
@@ -823,7 +837,7 @@ def accept_offer(offer_num):
                 cursor.execute("UPDATE offer SET status = 'Deal' \
                     WHERE offer_num ='{}'" .format(offer_num))
                 if newagent is not None:
-                    cursor.execute("UPDATE agent SET total_commission = {}, commission_rate = 0.03\
+                    cursor.execute("UPDATE agent SET total_commission = {} \
                         WHERE agent_num ='{}'" .format(newtotal,newagent))
                 conn.commit()
                 cursor.close()
