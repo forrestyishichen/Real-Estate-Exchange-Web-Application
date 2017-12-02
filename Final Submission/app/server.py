@@ -843,7 +843,7 @@ def accept_offer(offer_num):
                 cursor.close()
                 flash('Congratulations, %s!' % escape(username))
             except:
-                flash('House Already Sold!!')
+                flash('There are some errors!')
                 conn.rollback()
     return redirect(url_for('owner_offer'))
 
