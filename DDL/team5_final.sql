@@ -399,7 +399,6 @@ AS SELECT area, count(*), avg(price)
 
 /* Add Stored Procedure */   
 
-DROP PROCEDURE IF EXISTS my_p;
 DELIMITER //
 Create Procedure role_check(IN arg1 VARCHAR(40), 
                     IN arg2 VARCHAR(40))
@@ -430,7 +429,7 @@ ELSEIF arg1 = 'buyer'
 THEN
 INSERT INTO buyer (buyer_num, ssn ) VALUES (arg2, arg3);
 ELSE 
-INSERT INTO agent (agent_num, ssn ) VALUES (arg2, arg3);
+INSERT INTO agent (agent_num, ssn, commission_rate) VALUES (arg2, arg3, 0.03);
 END IF;
 END//
 DELIMITER ;

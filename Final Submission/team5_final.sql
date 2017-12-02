@@ -399,7 +399,6 @@ AS SELECT area, count(*), avg(price)
 
 /* Add Stored Procedure */   
 
-DROP PROCEDURE IF EXISTS my_p;
 DELIMITER //
 Create Procedure role_check(IN arg1 VARCHAR(40), 
                     IN arg2 VARCHAR(40))
