@@ -728,7 +728,7 @@ def register():
         cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
         data = cursor.fetchone()
         if data is not None:
-            error = 'Duplicate username and password'
+            error = 'Duplicate username!'
             cursor.close()
         else:
             '''
@@ -741,8 +741,9 @@ def register():
                 conn.commit()
                 cursor.close()
                 flash('You were registered, %s' % escape(username))
-                return render_template('login.html', error=error)
+                return redirect(url_for('login'))
             except:
+                error = 'There are some errors!'
                 conn.rollback()    
     return render_template('register.html', error=error)
 
@@ -808,12 +809,12 @@ def accept_offer(offer_num):
             newid = data[0]
             newprice = data[1]
             newagent = data[2]
-
-            cursor.execute("SELECT total_commission FROM agent \
-                WHERE agent_num='{}'" .format(newagent))
-            data = cursor.fetchone()
-            newtotal = data[0]
-            newtotal = float(newtotal) + (float(newprice)*0.03)
+            if newagent is not None:
+                cursor.execute("SELECT total_commission FROM agent \
+                    WHERE agent_num='{}'" .format(newagent))
+                data = cursor.fetchone()
+                newtotal = data[0]
+                newtotal = float(newtotal) + (float(newprice)*0.03)
 
             conn.autocommit(False)
             try:
@@ -821,8 +822,9 @@ def accept_offer(offer_num):
                     WHERE property_id ='{}'" .format(newprice,newid))
                 cursor.execute("UPDATE offer SET status = 'Deal' \
                     WHERE offer_num ='{}'" .format(offer_num))
-                cursor.execute("UPDATE agent SET total_commission = {}, commission_rate = 0.03\
-                    WHERE agent_num ='{}'" .format(newtotal,newagent))
+                if newagent is not None:
+                    cursor.execute("UPDATE agent SET total_commission = {}, commission_rate = 0.03\
+                        WHERE agent_num ='{}'" .format(newtotal,newagent))
                 conn.commit()
                 cursor.close()
                 flash('Congratulations, %s!' % escape(username))

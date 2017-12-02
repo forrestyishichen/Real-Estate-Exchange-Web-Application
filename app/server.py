@@ -809,11 +809,12 @@ def accept_offer(offer_num):
             newprice = data[1]
             newagent = data[2]
 
-            cursor.execute("SELECT total_commission FROM agent \
+            cursor.execute("SELECT total_commission, commission_rate FROM agent \
                 WHERE agent_num='{}'" .format(newagent))
             data = cursor.fetchone()
             newtotal = data[0]
-            newtotal = float(newtotal) + (float(newprice)*0.03)
+            newrate = data[1]
+            newtotal = float(newtotal) + (float(newprice)*float(newrate))
 
             conn.autocommit(False)
             try:
@@ -821,8 +822,8 @@ def accept_offer(offer_num):
                     WHERE property_id ='{}'" .format(newprice,newid))
                 cursor.execute("UPDATE offer SET status = 'Deal' \
                     WHERE offer_num ='{}'" .format(offer_num))
-                cursor.execute("UPDATE agent SET total_commission = {}, commission_rate = 0.03\
-                    WHERE agent_num ='{}'" .format(newtotal,newagent))
+                cursor.execute("UPDATE agent SET total_commission = {} \
+                    WHERE agent_num ='{}'" .format(newtotal))
                 conn.commit()
                 cursor.close()
                 flash('Congratulations, %s!' % escape(username))
