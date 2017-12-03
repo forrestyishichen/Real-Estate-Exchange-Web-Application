@@ -861,5 +861,7 @@ Main
 
 if __name__ == '__main__':
     app.debug = True
+    import logging
+    logging.basicConfig(filename='logfile.log',level=logging.DEBUG)
     app.run()
     # app.run(host='0.0.0.0',port=5000)
