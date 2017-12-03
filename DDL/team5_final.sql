@@ -397,4 +397,41 @@ AS SELECT area, count(*), avg(price)
    AND status = 'On Sale'
    GROUP BY area;
 
+/* Add Stored Procedure */   
+
+DELIMITER //
+Create Procedure role_check(IN arg1 VARCHAR(40), 
+                    IN arg2 VARCHAR(40))
+BEGIN
+DECLARE var1 VARCHAR(40);
+IF arg1 = 'owner' 
+THEN 
+SELECT owner_num from owner where ssn = arg2;
+ELSEIF arg1 = 'buyer'
+THEN
+SELECT buyer_num from buyer where ssn = arg2;
+ELSE SELECT agent_num from agent where ssn = arg2;
+END IF;
+END//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS role_insert;
+DELIMITER //
+Create Procedure role_insert(IN arg1 VARCHAR(40),
+                             IN arg2 VARCHAR(40), 
+                           IN arg3 VARCHAR(40))
+BEGIN
+DECLARE var1 VARCHAR(40);
+IF arg1 = 'owner' 
+THEN 
+INSERT INTO owner (owner_num, ssn ) VALUES (arg2, arg3);
+ELSEIF arg1 = 'buyer'
+THEN
+INSERT INTO buyer (buyer_num, ssn ) VALUES (arg2, arg3);
+ELSE 
+INSERT INTO agent (agent_num, ssn, commission_rate) VALUES (arg2, arg3, 0.03);
+END IF;
+END//
+DELIMITER ;
+
 SET foreign_key_checks = 1;

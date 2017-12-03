@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+  <h2>Find a Home</h2>
+  <form action="{{ url_for('p_search') }}" method=post class=add-entry>
+    <dl>
+      <dt>Price:
+      <dd>
+        <input type=text size=30 name=lowprice>
+        between
+        <input type=text size=30 name=highprice>
+      <dt>Area:
+      <dd><input type=text size=30 name=area>
+      <dt>Room:
+      <dd><input type=text size=30 name=room_num>
+      <dt>Bath Room:
+      <dd><input type=text size=30 name=bath_num>
+      <dt>Garage:
+      <dd><input type=text size=30 name=garage_num>
+      <dd>
+      <dd><input type=submit value=search>
+    </dl>
+  </form>
+  <br>
+  <h2>Property List</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Area</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td><a href="/entity/{{ entry[0] }}">{{ entry[0] }}</a>
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if session.logged_in %}
+  <h2>Add an Open House</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %} 
+   <form action="{{ url_for('add_openhouse') }}" method=post class=add-entry>
+    <dl>
+      <dt>ID:
+      <dd><input type=text size=30 name=property_id>
+      <dt>Start Date:
+      <dd><input type=text size=30 name=start_date>
+      <dt>End Date:
+      <dd><input type=text size=30 name=end_date>
+      <dd><input type=submit value=submit>
+    </dl>
+  </form>
+  <br>
+  <h2>My Open House</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Open House Number</th>
+          <th>Property ID</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}</a>
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+            <td>{{ entry[2] }}
+            </td>
+            <td>{{ entry[3] }}
+            </td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable. No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

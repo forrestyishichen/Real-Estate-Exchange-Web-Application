@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if session.logged_in %}
+  <h2>My Commision</h2>
+  <br>
+  <ul class=entries>
+    <table class=table>
+      <thead>
+        <tr>
+          <th>Total Accepted Offer</th>
+          <th>Total Commission</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry[0] }}
+            </td>
+            <td>{{ entry[1] }}
+            </td>
+          </tr>
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </tbody>
+    </table>
+  </ul>
+{% endif %}
+{% endblock %}

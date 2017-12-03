@@ -1,0 +1,55 @@
+<!doctype html>
+<title>CMPE 226 Team 5</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1>CMPE 226 Team 5</h1>
+  <div class=metanav>
+  {% if not session.logged_in %}
+    <a href="{{ url_for('register') }}">Register</a>
+    <a href="{{ url_for('login') }}">Login</a>
+  {% else %}
+    <a>Welcome, {{ session.username }}!</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  {% endif %}
+  </div>
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+  {% if session.logged_in %}
+  {% if session.rolename == "owner" %}
+  <div class=metanav>
+    <a href="{{ url_for('search_property') }}">Find a Home</a>
+    <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
+    <a href="{{ url_for('owner_property') }}">Sell My Home</a>
+    <a href="{{ url_for('owner_offer') }}">My Offer</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
+  </div>
+  {% endif %}
+  {% if session.rolename == "agent" %}
+  <div class=metanav>
+    <a href="{{ url_for('search_property') }}">Find a Home</a>
+    <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
+    <a href="{{ url_for('agent_openhouse') }}">My Open House</a>
+    <a href="{{ url_for('agent_commision') }}">My Commision</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
+  </div>
+  {% endif %}
+  {% if session.rolename == "buyer" %}
+  <div class=metanav>
+    <a href="{{ url_for('search_property') }}">Find a Home</a>
+    <a href="{{ url_for('search_openhouse') }}">Find a Open House</a>
+    <a href="{{ url_for('buyer_offer') }}">My offer</a>
+    <a href="{{ url_for('buyer_openhouse') }}">My Open house</a>
+    <a href="{{ url_for('market_report') }}">Market Report</a>
+  </div>
+  {% endif %}
+  {% if session.rolename == "Admin" %}
+  <div class=metanav>
+    <a href="{{ url_for('admin_property') }}">Property Management</a>
+    <a href="{{ url_for('admin_offer') }}">Offer Management</a>
+    <a href="{{ url_for('admin_import') }}">Import</a>
+  </div>
+  {% endif %}
+  {% endif %}
+  {% block body %}{% endblock %}
+</div>
