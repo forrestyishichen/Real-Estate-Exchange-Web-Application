@@ -91,23 +91,33 @@ Admin Updates
 '''
 @app.route('/admin_update/<id>', methods=['GET', 'POST'])
 def admin_update(id):
+    error = []
     if request.method == 'POST':
         conn = mysql.connect()
         cursor = conn.cursor()
         update = request.form['status']
+        conn.autocommit(False)
         if id[0]  == 'p':
-            cursor.execute("UPDATE property SET status = '{}' \
-                WHERE property_id ='{}'" .format(update,id))
-            conn.commit()
-            cursor.close()
-            flash('Updated!')
+            try:
+                cursor.execute("UPDATE property SET status = '{}' \
+                    WHERE property_id ='{}'" .format(update,id))
+                conn.commit()
+                cursor.close()
+                flash('Updated!')
+            except:
+                error = 'There are some errors!'
+                conn.rollback()
         elif id[0]  == 'o':
-            cursor.execute("UPDATE offer SET status = '{}' \
-                WHERE offer_num ='{}'" .format(update, id))
-            conn.commit()
-            cursor.close()
-            flash('Updated!')
-    return render_template('admin_tool.html')
+            try:
+                cursor.execute("UPDATE offer SET status = '{}' \
+                    WHERE offer_num ='{}'" .format(update, id))
+                conn.commit()
+                cursor.close()
+                flash('Updated!')
+            except:
+                error = 'There are some errors!'
+                conn.rollback() 
+    return render_template('admin_tool.html', error=error)
 
 '''
 Admin Import
@@ -428,7 +438,7 @@ def add_property():
                 flash('You Home were registered!')
             except:
                 error = 'There are some errors!'
-                conn.rollback()    
+                conn.rollback()
     return render_template('owenr_property.html', error=error)
 
 '''
@@ -720,46 +730,34 @@ def register():
             error = "Missing Information!"
             return render_template('register.html', error=error)
 
+        '''
+        Duplicate check
+        '''
         conn = mysql.connect()
         cursor = conn.cursor()
-
-        conn.autocommit(False)
-        try:
-            # ssn, user_name, password, bdate, address, email, fname, minit, lname
-            cursor.execute("CALL Register(@A, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')".format(
-                ssn, user_name, password, bdate, address, email, fname, minit, lname))
-            cursor.execute("SELECT @A")
-            returnvalue = cursor.fetchone()[0] # failed or succeed
-            conn.commit()
+        cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
+        data = cursor.fetchone()
+        if data is not None:
+            error = 'Duplicate username!'
             cursor.close()
-            flash('Register of {s} {s}'.format(username, returnvalue))
-            return render_template('login.html', error=error)
-        except:
-            conn.rollback()
-        conn.autocommit(True)
-
-        # '''
-        # Duplicate check
-        # '''
-        # cursor.execute("SELECT * FROM user WHERE user_name='{}'" .format(username))
-        # data = cursor.fetchone()
-        # if data is not None:
-        #     error = 'Duplicate username and password'
-        #     cursor.close()
-        # else:
-        #     '''
-        #     Transaction
-        #     '''
-        #     conn.autocommit(False)
-        #     try:
-        #         cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn, username, hashed_password, bdate, address, email))
-        #         cursor.execute("INSERT INTO name (user_name, fname, minit, lname) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
-        #         conn.commit()
-        #         cursor.close()
-        #         flash('You were registered, %s' % escape(username))
-        #         return render_template('login.html', error=error)
-        #     except:
-        #         conn.rollback()    
+        else:
+            '''
+            Transaction
+            '''
+            conn.autocommit(False)
+            try:
+                cursor.execute("INSERT INTO user (ssn, user_name, password, bdate, \
+                    address, email) VALUES('{}', '{}', '{}', '{}', '{}', '{}')" .format(ssn \
+                        , username, hashed_password, bdate, address, email))
+                cursor.execute("INSERT INTO name (user_name, fname, minit, lname \
+                    ) VALUES('{}', '{}', '{}', '{}')" .format(username, fname, minit, lname))
+                conn.commit()
+                cursor.close()
+                flash('You were registered, %s' % escape(username))
+                return redirect(url_for('login'))
+            except:
+                error = 'There are some errors!'
+                conn.rollback()    
     return render_template('register.html', error=error)
 
 '''
@@ -824,13 +822,13 @@ def accept_offer(offer_num):
             newid = data[0]
             newprice = data[1]
             newagent = data[2]
-
-            cursor.execute("SELECT total_commission, commission_rate FROM agent \
-                WHERE agent_num='{}'" .format(newagent))
-            data = cursor.fetchone()
-            newtotal = data[0]
-            newrate = data[1]
-            newtotal = float(newtotal) + (float(newprice)*float(newrate))
+            if newagent is not None:
+                cursor.execute("SELECT total_commission, commission_rate FROM agent \
+                    WHERE agent_num='{}'" .format(newagent))
+                data = cursor.fetchone()
+                newtotal = data[0]
+                newrate = data[1]
+                newtotal = float(newtotal) + (float(newprice)*float(newrate))
 
             conn.autocommit(False)
             try:
@@ -838,13 +836,14 @@ def accept_offer(offer_num):
                     WHERE property_id ='{}'" .format(newprice,newid))
                 cursor.execute("UPDATE offer SET status = 'Deal' \
                     WHERE offer_num ='{}'" .format(offer_num))
-                cursor.execute("UPDATE agent SET total_commission = {} \
-                    WHERE agent_num ='{}'" .format(newtotal))
+                if newagent is not None:
+                    cursor.execute("UPDATE agent SET total_commission = {} \
+                        WHERE agent_num ='{}'" .format(newtotal,newagent))
                 conn.commit()
                 cursor.close()
                 flash('Congratulations, %s!' % escape(username))
             except:
-                flash('House Already Sold!!')
+                flash('There are some errors!')
                 conn.rollback()
     return redirect(url_for('owner_offer'))
 
@@ -862,5 +861,7 @@ Main
 
 if __name__ == '__main__':
     app.debug = True
+    import logging
+    logging.basicConfig(filename='logfile.log',level=logging.DEBUG)
     app.run()
     # app.run(host='0.0.0.0',port=5000)
