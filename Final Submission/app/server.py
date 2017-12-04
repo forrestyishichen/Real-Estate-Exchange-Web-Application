@@ -3,7 +3,7 @@ from flaskext.mysql import MySQL
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-
+import logging
 
 
 '''
@@ -545,19 +545,15 @@ def agent_commision():
     else:
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT count(offer.status)\
-            FROM offer WHERE offer.agent_num = '{}' \
-            AND offer.status = 'Deal'".format(session['roleid']))
-        data1=cursor.fetchone()
-        cursor.execute("SELECT total_commission FROM agent \
+        cursor.execute("SELECT commission_rate, total_commission FROM agent \
             where agent_num = '{}'" .format(session['roleid']))
-        data2=cursor.fetchone()
-        if data2[0] == None:
-            data2 = list(data2)
-            data2[0] = 0.00
-            data2 = tuple(data2)
+        data=cursor.fetchone()
+        if data[1] == None:
+            data = list(data2)
+            data[1] = 0.00
+            data = tuple(data2)
         entries =[] 
-        entries.append([data1[0],data2[0]])
+        entries.append([data[0],data[1]])
         cursor.close()
         return render_template('agent_commision.html', entries=entries)
 
@@ -614,22 +610,39 @@ def add_offer():
             error = 'This is your own House!'
             cursor.close()
         else:
-            agent_num = data[2]
-            cursor.execute("SELECT count(*) FROM offer")
-            num = cursor.fetchone()
-            conn.autocommit(False)
-            try:
-                cursor.execute("INSERT INTO offer (buyer_num, offer_num, \
-                    price, status, offer_date, property_id, agent_num) VALUES('{}', '{}', \
-                     '{}', 'Progress', '{}', '{}', '{}')" .format(session["roleid"], \
+            if data[2] is not None:
+                agent_num = data[2]
+                cursor.execute("SELECT count(*) FROM offer")
+                num = cursor.fetchone()
+                conn.autocommit(False)
+                try:
+                    cursor.execute("INSERT INTO offer (buyer_num, offer_num, \
+                        price, status, offer_date, property_id, agent_num) VALUES('{}', '{}', \
+                        '{}', 'Progress', '{}', '{}', '{}')" .format(session["roleid"], \
                         ('offer_' + str(num[0] + 1)), price, offer_date, property_id, agent_num))
-                conn.commit()
-                cursor.close()
-                flash('You Offer were registered!')
-                return redirect(url_for('buyer_offer'))
-            except:
-                error = 'There are some errors!'
-                conn.rollback()    
+                    conn.commit()
+                    cursor.close()
+                    flash('You Offer were registered!')
+                    return redirect(url_for('buyer_offer'))
+                except:
+                    error = 'There are some errors!'
+                    conn.rollback()
+            else:
+                cursor.execute("SELECT count(*) FROM offer")
+                num = cursor.fetchone()
+                conn.autocommit(False)
+                try:
+                    cursor.execute("INSERT INTO offer (buyer_num, offer_num, \
+                        price, status, offer_date, property_id) VALUES('{}', '{}', \
+                        '{}', 'Progress', '{}', '{}')" .format(session["roleid"], \
+                        ('offer_' + str(num[0] + 1)), price, offer_date, property_id))
+                    conn.commit()
+                    cursor.close()
+                    flash('You Offer were registered!')
+                    return redirect(url_for('buyer_offer'))
+                except:
+                    error = 'There are some errors!'
+                    conn.rollback()    
     return render_template('buyer_offer.html', error=error)
 
 '''
@@ -816,17 +829,22 @@ def accept_offer(offer_num):
             cursor.close()
             flash('Offer Already Accepted!!')
         else:
-            cursor.execute("SELECT property_id, price, agent_num FROM offer \
+            cursor.execute("SELECT property_id, price FROM offer \
                 WHERE offer_num='{}'" .format(offer_num))
             data = cursor.fetchone()
             newid = data[0]
             newprice = data[1]
-            newagent = data[2]
+            cursor.execute("SELECT agent_num FROM open_house \
+                WHERE property_id='{}'" .format(newid))
+            data = cursor.fetchone()
+            newagent = data[0]
             if newagent is not None:
                 cursor.execute("SELECT total_commission, commission_rate FROM agent \
                     WHERE agent_num='{}'" .format(newagent))
                 data = cursor.fetchone()
                 newtotal = data[0]
+                if newtotal is None:
+                    newtotal = 0
                 newrate = data[1]
                 newtotal = float(newtotal) + (float(newprice)*float(newrate))
 
@@ -862,4 +880,5 @@ Main
 if __name__ == '__main__':
     app.debug = True
     app.run()
+    logging.basicConfig(filename='logfile.log',level=logging.DEBUG)
     # app.run(host='0.0.0.0',port=5000)
