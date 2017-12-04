@@ -115,7 +115,7 @@ CREATE TABLE offer (
   status      VARCHAR(15) NOT NULL,
   offer_date  DATE,
   property_id VARCHAR(15) NOT NULL,
-  agent_num   VARCHAR(15) NOT NULL,
+  agent_num   VARCHAR(15),
   PRIMARY KEY (buyer_num, offer_num),
   FOREIGN KEY (buyer_num) REFERENCES buyer(buyer_num)
         ON DELETE CASCADE,
