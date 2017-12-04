@@ -426,8 +426,9 @@ def add_property():
         else:
             conn.autocommit(False)
             try:
+                # a trick here to change asking_price to price
                 cursor.execute("INSERT INTO property (property_id, status, \
-                    asking_price, list_date, owner_num) VALUES('{}', 'On Sale', \
+                    price, list_date, owner_num) VALUES('{}', 'On Sale', \
                      '{}', '{}', '{}')" .format(property_id, asking_price, list_date, session['roleid']))
                 cursor.execute("INSERT INTO property_parameter (property_id, \
                     room_num, bath_num, garage_num, lot_size, zip_code, area) \
