@@ -1,4 +1,4 @@
-# 226 Term project RealEstateExchange
+# Real Estate Exchange
 
 Welcome to the cmpe226-team wiki!
 
