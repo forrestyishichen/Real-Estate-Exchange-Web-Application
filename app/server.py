@@ -13,7 +13,7 @@ mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'any random string'
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '880112'
+app.config['MYSQL_DATABASE_PASSWORD'] = '******'
 app.config['MYSQL_DATABASE_DB'] = 'teamfive'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
